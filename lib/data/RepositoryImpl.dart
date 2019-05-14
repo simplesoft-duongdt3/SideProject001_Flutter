@@ -4,11 +4,11 @@ import 'package:flutter_app/domain/Repository.dart';
 import 'DataModel.dart';
 
 class EventRepositoryImpl implements EventRepository {
-  List<EventDataModel> databaseEventFake = [];
-  List<EventHistoryDataModel> databaseHistoryFake = [];
+  static List<EventDataModel> databaseEventFake = [];
+  static List<EventHistoryDataModel> databaseHistoryFake = [];
 
   @override
-  void createEvent(SaveEventDomainModel saveEventDataModel) {
+  Future<void> createEvent(SaveEventDomainModel saveEventDataModel) async {
     int nextItemId = _getNextItemId();
     bool defaultEventEnable = true;
     var nowMilliseconds = DateTime.now().toUtc().millisecondsSinceEpoch;
@@ -21,12 +21,18 @@ class EventRepositoryImpl implements EventRepository {
         saveEventDataModel.name,
         saveEventDataModel.expiredHour,
         saveEventDataModel.expiredMinute,
-        saveEventDataModel.weekdays,
         defaultEventEnable,
         enableTimeStart,
         enableTimeEnd,
         createdTime,
-        updatedTime
+        updatedTime,
+        saveEventDataModel.monday,
+        saveEventDataModel.tuesday,
+        saveEventDataModel.wednesday,
+        saveEventDataModel.thursday,
+        saveEventDataModel.friday,
+        saveEventDataModel.saturday,
+        saveEventDataModel.sunday
     );
 
     databaseEventFake.add(eventDataModel);
@@ -34,7 +40,7 @@ class EventRepositoryImpl implements EventRepository {
 
   int _getNextItemId() {
     int nextItemId = 0;
-    var lastItem = databaseEventFake.last;
+    var lastItem = databaseEventFake.isEmpty ? null : databaseEventFake[databaseEventFake.length - 1];
     if (lastItem != null) {
       nextItemId = lastItem.id + 1;
     } else {
@@ -44,8 +50,10 @@ class EventRepositoryImpl implements EventRepository {
   }
 
   @override
-  void disableEvent(DisableEventDomainModel disableEventDataModel) {
-    var checkCurrentEventId = (event) => event.id == disableEventDataModel.eventId;
+  Future<void> disableEvent(
+      DisableEventDomainModel disableEventDataModel) async {
+    var checkCurrentEventId =
+        (event) => event.id == disableEventDataModel.eventId;
     var findEvent = databaseEventFake.firstWhere(checkCurrentEventId);
     if (findEvent != null) {
       var nowMilliseconds = DateTime.now().toUtc().millisecondsSinceEpoch;
@@ -56,8 +64,9 @@ class EventRepositoryImpl implements EventRepository {
   }
 
   @override
-  void doneEvent(DoneEventDomainModel doneEventDomainModel) {
-    var checkCurrentEventId = (event) => event.id == doneEventDomainModel.eventId;
+  Future<void> doneEvent(DoneEventDomainModel doneEventDomainModel) async {
+    var checkCurrentEventId =
+        (event) => event.id == doneEventDomainModel.eventId;
     var findEvent = databaseEventFake.firstWhere(checkCurrentEventId);
 
     if (findEvent != null) {
@@ -72,34 +81,88 @@ class EventRepositoryImpl implements EventRepository {
           doneTime,
           findEvent.expiredHour,
           findEvent.expiredMinute,
-          createdTime
-      );
+          createdTime);
       databaseHistoryFake.add(eventHistoryDataModel);
     }
   }
 
   @override
-  List<EventHistoryDomainModel> getEventHistoryReport(ReportTimeEnum reportTimeEnum) {
+  Future<List<EventHistoryDomainModel>> getEventHistoryReport(
+      ReportTimeEnum reportTimeEnum) async {
     // TODO: implement getEventHistoryReport
     return null;
   }
 
   @override
-  List<EventDomainModel> getTodayEvents() {
-    var nowWeekday = DateTime.now().weekday;
+  Future<List<EventDomainModel>> getTodayEvents() async {
+    await new Future.delayed(const Duration(seconds: 3));
     List<EventDomainModel> matchedEvents = databaseEventFake
-        .where((event) => event.weekdays.contains(nowWeekday))
-        .map((eventDataModel) => _mapEventDataToEventDomain(eventDataModel));
+        .where((event) => _checkWeekdayInToday(event))
+        .map((eventDataModel) => _mapEventDataToEventDomain(eventDataModel))
+        .toList(growable: true);
     return matchedEvents;
   }
 
   EventDomainModel _mapEventDataToEventDomain(EventDataModel eventDataModel) {
+    print(eventDataModel);
     return EventDomainModel(
         eventDataModel.id,
         eventDataModel.name,
         eventDataModel.expiredHour,
-        eventDataModel.expiredMinute,
-        eventDataModel.weekdays
-    );
+        eventDataModel.expiredMinute);
+  }
+
+  List<int> buildWeekdays(SaveEventDomainModel saveEventDataModel) {
+    List<int> result = [];
+    if (saveEventDataModel.sunday) {
+      result.add(DateTime.sunday);
+    }
+    if (saveEventDataModel.monday) {
+      result.add(DateTime.monday);
+    }
+    if (saveEventDataModel.tuesday) {
+      result.add(DateTime.tuesday);
+    }
+    if (saveEventDataModel.wednesday) {
+      result.add(DateTime.wednesday);
+    }
+    if (saveEventDataModel.thursday) {
+      result.add(DateTime.thursday);
+    }
+    if (saveEventDataModel.friday) {
+      result.add(DateTime.friday);
+    }
+    if (saveEventDataModel.saturday) {
+      result.add(DateTime.saturday);
+    }
+
+    return result;
+  }
+
+  bool _checkWeekdayInToday(EventDataModel event) {
+    var nowWeekday = DateTime.now().weekday;
+    if (nowWeekday == DateTime.monday ) {
+      return event.monday;
+    }
+    if (nowWeekday == DateTime.tuesday ) {
+      return event.tuesday;
+    }
+    if (nowWeekday == DateTime.wednesday ) {
+      return event.wednesday;
+    }
+    if (nowWeekday == DateTime.thursday ) {
+      return event.thursday;
+    }
+    if (nowWeekday == DateTime.friday ) {
+      return event.friday;
+    }
+    if (nowWeekday == DateTime.saturday ) {
+      return event.saturday;
+    }
+    if (nowWeekday == DateTime.sunday ) {
+      return event.sunday;
+    }
+
+    return false;
   }
 }

@@ -3,16 +3,13 @@ import 'dart:core';
 class EventDomainModel {
   int _id;
   String _name;
+
   //example 18:59
   int _expiredHour;
   int _expiredMinute;
-  //Sunday 1 Mon 2 Sat 7
-  List<int> _weekdays;
 
-  EventDomainModel(this._id, this._name, this._expiredHour,
-      this._expiredMinute, this._weekdays);
-
-  List<int> get weekdays => _weekdays;
+  EventDomainModel(
+      this._id, this._name, this._expiredHour, this._expiredMinute);
 
   String get name => _name;
 
@@ -21,27 +18,51 @@ class EventDomainModel {
   int get expiredMinute => _expiredMinute;
 
   int get expiredHour => _expiredHour;
-
 }
 
 class SaveEventDomainModel {
   String _name;
-  //example 18:59
   int _expiredHour;
   int _expiredMinute;
-  //Sunday 1 Mon 2 Sat 7
-  List<int> _weekdays;
+  bool _monday;
+  bool _tuesday;
+  bool _wednesday;
+  bool _thursday;
+  bool _friday;
+  bool _saturday;
+  bool _sunday;
 
-  SaveEventDomainModel(this._name, this._expiredHour, this._weekdays);
+  SaveEventDomainModel(
+      this._name,
+      this._expiredHour,
+      this._expiredMinute,
+      this._monday,
+      this._tuesday,
+      this._wednesday,
+      this._thursday,
+      this._friday,
+      this._saturday,
+      this._sunday);
 
-  List<int> get weekdays => _weekdays;
+  bool get sunday => _sunday;
 
+  bool get saturday => _saturday;
+
+  bool get friday => _friday;
+
+  bool get thursday => _thursday;
+
+  bool get wednesday => _wednesday;
+
+  bool get tuesday => _tuesday;
+
+  bool get monday => _monday;
+
+  int get expiredMinute => _expiredMinute;
 
   int get expiredHour => _expiredHour;
 
   String get name => _name;
-
-  int get expiredMinute => _expiredMinute;
 }
 
 class DisableEventDomainModel {

@@ -1,9 +1,9 @@
 import 'DomainModel.dart';
 
 abstract class EventRepository {
-  void createEvent(SaveEventDomainModel saveEventDataModel);
-  void disableEvent(DisableEventDomainModel disableEventDataModel);
-  void doneEvent(DoneEventDomainModel doneEventDomainModel);
-  List<EventDomainModel> getTodayEvents();
-  List<EventHistoryDomainModel> getEventHistoryReport(ReportTimeEnum reportTimeEnum);
+  Future<void> createEvent(SaveEventDomainModel saveEventDataModel);
+  Future<void> disableEvent(DisableEventDomainModel disableEventDataModel);
+  Future<void> doneEvent(DoneEventDomainModel doneEventDomainModel);
+  Future<List<EventDomainModel>> getTodayEvents();
+  Future<List<EventHistoryDomainModel>> getEventHistoryReport(ReportTimeEnum reportTimeEnum);
 }

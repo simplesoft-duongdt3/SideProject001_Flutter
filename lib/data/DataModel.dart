@@ -1,23 +1,26 @@
 class EventDataModel {
   int id;
   String name;
-
-  //example 18:59
   int expiredHour;
   int expiredMinute;
-
-  //Sunday 1 Mon 2 Sat 7
-  List<int> weekdays;
-
   bool enable;
   int enableTimeStart;
   int enableTimeEnd;
   int createdTime;
   int updateTime;
+  bool monday;
+  bool tuesday;
+  bool wednesday;
+  bool thursday;
+  bool friday;
+  bool saturday;
+  bool sunday;
 
-  EventDataModel(this.id, this.name, this.expiredHour,
-      this.expiredMinute, this.weekdays, this.enable, this.enableTimeStart,
-      this.enableTimeEnd, this.createdTime, this.updateTime);
+  EventDataModel(this.id, this.name, this.expiredHour, this.expiredMinute,
+      this.enable, this.enableTimeStart, this.enableTimeEnd, this.createdTime,
+      this.updateTime, this.monday, this.tuesday, this.wednesday, this.thursday,
+      this.friday, this.saturday, this.sunday);
+
 }
 
 
@@ -33,6 +36,4 @@ class EventHistoryDataModel {
   EventHistoryDataModel(this.eventId, this.eventName, this.isDone,
       this.doneTime, this.expiredHour, this.expiredMinute,
       this.createdTime);
-
-
 }
