@@ -23,8 +23,8 @@ class EventDataModel {
 
 }
 
-
 class EventHistoryDataModel {
+  int id;
   int eventId;
   String eventName;
   bool isDone;
@@ -32,8 +32,14 @@ class EventHistoryDataModel {
   int expiredHour;
   int expiredMinute;
   int createdTime;
+  int date;
+  int status;
 
   EventHistoryDataModel(this.eventId, this.eventName, this.isDone,
       this.doneTime, this.expiredHour, this.expiredMinute,
-      this.createdTime);
+      this.createdTime, this.date);
+
+  static const int STATUS_TODO = 0;
+  static const int STATUS_DONE = 1;
+  static const int STATUS_OUT_OF_TIME = 2;
 }

@@ -1,23 +1,34 @@
 import 'dart:core';
 
 class EventDomainModel {
-  int _id;
+  int _eventId;
+  int _historyId;
   String _name;
-
-  //example 18:59
   int _expiredHour;
   int _expiredMinute;
+  TaskStatus _status;
 
   EventDomainModel(
-      this._id, this._name, this._expiredHour, this._expiredMinute);
+      this._eventId, this._historyId, this._name, this._expiredHour, this._expiredMinute, this._status
+      );
 
   String get name => _name;
 
-  int get id => _id;
+  int get eventId => _eventId;
 
   int get expiredMinute => _expiredMinute;
 
   int get expiredHour => _expiredHour;
+
+  int get historyId => _historyId;
+
+  TaskStatus get status => _status;
+}
+
+enum TaskStatus {
+  TODO,
+  DONE,
+  OUT_OF_TIME
 }
 
 class SaveEventDomainModel {
@@ -75,10 +86,15 @@ class DisableEventDomainModel {
 
 class DoneEventDomainModel {
   int _eventId;
+  int _historyId;
 
-  DoneEventDomainModel(this._eventId);
+  DoneEventDomainModel(this._eventId, this._historyId);
 
   int get eventId => _eventId;
+
+  int get historyId => _historyId;
+
+
 }
 
 class EventHistoryDomainModel {
@@ -91,6 +107,10 @@ class EventHistoryDomainModel {
   int createdTime;
 }
 
+class EventHistoryStatus {
+
+}
+
 enum ReportTimeEnum {
   TODAY,
   YESTERDAY,
@@ -99,3 +119,4 @@ enum ReportTimeEnum {
   THIS_MONTH,
   LAST_MONTH
 }
+

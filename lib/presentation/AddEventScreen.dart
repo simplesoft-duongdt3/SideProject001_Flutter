@@ -42,7 +42,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
       appBar: AppBar(
         title: Text(_title),
         //hide back button
-        automaticallyImplyLeading: false,
+        //automaticallyImplyLeading: false,
       ),
       body: Center(
         child: Form(
@@ -76,8 +76,10 @@ class _AddEventScreenState extends State<AddEventScreen> {
                     labelText: 'Task expired time',
                     hasFloatingPlaceholder: false),
                 onChanged: (dt) {
-                  _addEventPresentationModel.expiredHour = dt.hour;
-                  _addEventPresentationModel.expiredMinute = dt.minute;
+                  if (dt != null) {
+                    _addEventPresentationModel.expiredHour = dt.hour;
+                    _addEventPresentationModel.expiredMinute = dt.minute;
+                  }
                 },
               ),
               CheckboxListTile(

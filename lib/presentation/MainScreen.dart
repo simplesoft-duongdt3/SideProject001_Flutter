@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_app/domain/DomainModel.dart';
 import 'package:flutter_app/presentation/bloc/MainScreenBloc.dart';
 import 'package:flutter_app/presentation/model/PresentationModel.dart';
 
@@ -105,28 +106,50 @@ class MainScreenState extends State<MainScreen> {
       List<EventPresentationModel> eventList, BuildContext context, int index) {
     var event = eventList[index];
     return ListTile(
-        leading: Icon(
-          Icons.event_note,
-          color: Theme.of(context).primaryColor,
-        ),
-        title: Text(
-          event.name,
-        ),
-        subtitle: Text(
-          '${event.expiredHour}:${event.expiredMinute}',
-        ),
-        trailing: InkWell(
-          onTap: () {
-            _onDoneTaskClicked(event);
-          },
-          child: Padding(
-              padding: EdgeInsets.all(4),
-              child: Icon(
-                Icons.done,
-                color: Colors.green,
-                size: 32,
-              )),
-        ));
+      leading: Icon(
+        Icons.event_note,
+        color: Theme.of(context).primaryColor,
+      ),
+      title: Text(
+        event.name,
+      ),
+      subtitle: Text(
+        '${event.expiredHour}:${event.expiredMinute}',
+      ),
+      trailing: buildStatusWidget(event),
+    );
+  }
+
+  Widget buildStatusWidget(EventPresentationModel event) {
+    if (event.status == TaskStatus.TODO) {
+      return InkWell(
+        onTap: () {
+          _onDoneTaskClicked(event);
+        },
+        child: Padding(
+            padding: EdgeInsets.all(4),
+            child: Icon(
+              Icons.done,
+              color: Colors.green,
+              size: 32,
+            )),
+      );
+    } else if (event.status == TaskStatus.OUT_OF_TIME) {
+      return InkWell(
+        onTap: () {
+          _onDoneTaskClicked(event);
+        },
+        child: Padding(
+            padding: EdgeInsets.all(4),
+            child: Icon(
+              Icons.alarm_off,
+              color: Colors.red,
+              size: 32,
+            )),
+      );
+    } else {
+      return null;
+    }
   }
 
   void _onAddButtonClicked() {
@@ -157,7 +180,7 @@ class MainScreenState extends State<MainScreen> {
               child: new Text("DONE"),
               onPressed: () async {
                 Navigator.of(context).pop();
-                await _mainScreenBloc.doneTask(event.id);
+                await _mainScreenBloc.doneTask(event.eventId, event.historyId);
                 _refreshData();
               },
             ),

@@ -16,15 +16,17 @@ class MainScreenBloc {
       List<EventDomainModel> todayEvents) {
     return todayEvents
         .map((event) => EventPresentationModel(
-              event.id,
+              event.eventId,
+              event.historyId,
               event.name,
               event.expiredHour,
-              event.expiredMinute
+              event.expiredMinute,
+              event.status
             ))
         .toList(growable: false);
   }
 
-  Future<void> doneTask(int eventId) async {
-
+  Future<void> doneTask(int eventId, int historyId) async {
+    await _eventRepository.doneEvent(DoneEventDomainModel(eventId, historyId));
   }
 }

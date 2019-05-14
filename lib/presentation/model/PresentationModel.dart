@@ -1,10 +1,14 @@
+import 'package:flutter_app/domain/DomainModel.dart';
+
 class EventPresentationModel {
-  int id;
+  int eventId;
+  int historyId;
   String name;
   int expiredHour;
   int expiredMinute;
+  TaskStatus status;
 
-  EventPresentationModel(this.id, this.name, this.expiredHour, this.expiredMinute);
+  EventPresentationModel(this.eventId, this.historyId, this.name, this.expiredHour, this.expiredMinute, this.status);
 }
 
 class AddEventPresentationModel {
