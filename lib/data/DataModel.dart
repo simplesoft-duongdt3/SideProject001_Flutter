@@ -16,18 +16,29 @@ class EventDataModel {
   bool saturday;
   bool sunday;
 
-  EventDataModel(this.id, this.name, this.expiredHour, this.expiredMinute,
-      this.enable, this.enableTimeStart, this.enableTimeEnd, this.createdTime,
-      this.updateTime, this.monday, this.tuesday, this.wednesday, this.thursday,
-      this.friday, this.saturday, this.sunday);
-
+  EventDataModel(
+      this.id,
+      this.name,
+      this.expiredHour,
+      this.expiredMinute,
+      this.enable,
+      this.enableTimeStart,
+      this.enableTimeEnd,
+      this.createdTime,
+      this.updateTime,
+      this.monday,
+      this.tuesday,
+      this.wednesday,
+      this.thursday,
+      this.friday,
+      this.saturday,
+      this.sunday);
 }
 
 class EventHistoryDataModel {
   int id;
   int eventId;
   String eventName;
-  bool isDone;
   int doneTime;
   int expiredHour;
   int expiredMinute;
@@ -35,9 +46,8 @@ class EventHistoryDataModel {
   int date;
   int status;
 
-  EventHistoryDataModel(this.eventId, this.eventName, this.isDone,
-      this.doneTime, this.expiredHour, this.expiredMinute,
-      this.createdTime, this.date);
+  EventHistoryDataModel(this.id, this.eventId, this.eventName, this.doneTime,
+      this.expiredHour, this.expiredMinute, this.createdTime, this.date, this.status);
 
   static const int STATUS_TODO = 0;
   static const int STATUS_DONE = 1;

@@ -9,9 +9,9 @@ class EventRepositoryImpl implements EventRepository {
 
   @override
   Future<void> createEvent(SaveEventDomainModel saveEventDataModel) async {
-    int nextItemId = _getNextItemId();
+    int nextItemId = _getTaskNextItemId();
     bool defaultEventEnable = true;
-    var nowMilliseconds = DateTime.now().toUtc().millisecondsSinceEpoch;
+    var nowMilliseconds = _getNowMilliseconds();
     int createdTime = nowMilliseconds;
     int updatedTime = 0;
     int enableTimeStart = nowMilliseconds;
@@ -37,11 +37,24 @@ class EventRepositoryImpl implements EventRepository {
     databaseEventFake.add(eventDataModel);
   }
 
-  int _getNextItemId() {
+  int _getTaskNextItemId() {
     int nextItemId = 0;
     var lastItem = databaseEventFake.isEmpty
         ? null
         : databaseEventFake[databaseEventFake.length - 1];
+    if (lastItem != null) {
+      nextItemId = lastItem.id + 1;
+    } else {
+      nextItemId = 1;
+    }
+    return nextItemId;
+  }
+
+  int _getHistoryNextItemId() {
+    int nextItemId = 0;
+    var lastItem = databaseHistoryFake.isEmpty
+        ? null
+        : databaseHistoryFake[databaseHistoryFake.length - 1];
     if (lastItem != null) {
       nextItemId = lastItem.id + 1;
     } else {
@@ -55,9 +68,10 @@ class EventRepositoryImpl implements EventRepository {
       DisableEventDomainModel disableEventDataModel) async {
     var checkCurrentEventId =
         (event) => event.eventId == disableEventDataModel.eventId;
-    var findEvent = databaseEventFake.firstWhere(checkCurrentEventId, orElse: () => null);
+    var findEvent =
+        databaseEventFake.firstWhere(checkCurrentEventId, orElse: () => null);
     if (findEvent != null) {
-      var nowMilliseconds = DateTime.now().toUtc().millisecondsSinceEpoch;
+      var nowMilliseconds = _getNowMilliseconds();
       findEvent.enable = false;
       findEvent.enableTimeEnd = nowMilliseconds;
       findEvent.updateTime = nowMilliseconds;
@@ -70,6 +84,8 @@ class EventRepositoryImpl implements EventRepository {
         (history) => history.id == doneEventDomainModel.historyId,
         orElse: () => null);
     if (findHistory != null) {
+      var nowMilliseconds = _getNowMilliseconds();
+      findHistory.doneTime = nowMilliseconds;
       findHistory.status = EventHistoryDataModel.STATUS_DONE;
     }
   }
@@ -77,8 +93,11 @@ class EventRepositoryImpl implements EventRepository {
   @override
   Future<List<EventHistoryDomainModel>> getEventHistoryReport(
       ReportTimeEnum reportTimeEnum) async {
-    // TODO: implement getEventHistoryReport
-    return null;
+    List<int> dateValues = _getReportDateValues(reportTimeEnum);
+    return databaseHistoryFake
+        .where((history) => dateValues.contains(history.date))
+        .map((history) => _mapHistory(history))
+        .toList(growable: false);
   }
 
   @override
@@ -170,8 +189,9 @@ class EventRepositoryImpl implements EventRepository {
         _findTodayHistoryModels(listOfTaskId, dateValue);
     for (var task in matchedTasks) {
       bool isCreateHistory = true;
-      var history = todayHistoryModels
-          .firstWhere((history) => history.eventId == task.id, orElse: () => null);
+      var history = todayHistoryModels.firstWhere(
+          (history) => history.eventId == task.id,
+          orElse: () => null);
       if (history != null) {
         isCreateHistory = false;
       }
@@ -183,28 +203,36 @@ class EventRepositoryImpl implements EventRepository {
   }
 
   void _createHistory(EventDataModel task, int dateValue) {
-    var nowMilliseconds = DateTime.now().toUtc().millisecondsSinceEpoch;
+    var nowMilliseconds = _getNowMilliseconds();
     var doneTime = nowMilliseconds;
     var createdTime = nowMilliseconds;
-    bool isDone = true;
+
+    int id = _getHistoryNextItemId();
     EventHistoryDataModel eventHistoryDataModel = EventHistoryDataModel(
+      id,
       task.id,
       task.name,
-      isDone,
       doneTime,
       task.expiredHour,
       task.expiredMinute,
       createdTime,
       dateValue,
+      EventHistoryDataModel.STATUS_TODO,
     );
     databaseHistoryFake.add(eventHistoryDataModel);
   }
 
   int _getDateValueToday() {
     var now = DateTime.now();
-    var year = now.year;
-    var month = now.month;
-    var date = now.day;
+    int dateValue = _getDateValue(now);
+    return dateValue;
+  }
+
+  int _getDateValue(DateTime dateSelect) {
+    var utcDateTime = dateSelect.toUtc();
+    var year = utcDateTime.year;
+    var month = utcDateTime.month;
+    var date = utcDateTime.day;
     int dateValue = (year * 10000) + (month * 100) + date;
     return dateValue;
   }
@@ -225,5 +253,58 @@ class EventRepositoryImpl implements EventRepository {
     } else {
       return TaskStatus.TODO;
     }
+  }
+
+  List<int> _getReportDateValues(ReportTimeEnum reportTimeEnum) {
+    List<int> dateValues = [];
+
+    var now = DateTime.now();
+    switch (reportTimeEnum) {
+      case ReportTimeEnum.TODAY:
+        dateValues.add(_getDateValueToday());
+        break;
+      case ReportTimeEnum.YESTERDAY:
+        DateTime dateSelect = now.subtract(Duration(days: 1));
+        dateValues.add(_getDateValue(dateSelect));
+        break;
+      case ReportTimeEnum.THIS_WEEK:
+        DateTime startWeek = now.subtract(Duration(days: now.weekday - 1));
+        int i = 0;
+        do {
+          DateTime dateSelect = startWeek.add(Duration(days: i));
+          var dateValue = _getDateValue(dateSelect);
+          dateValues.add(dateValue);
+          i++;
+        } while (i <= 6);
+        break;
+      case ReportTimeEnum.LAST_WEEK:
+        DateTime startCurrentWeek =
+            now.subtract(Duration(days: now.weekday - 1));
+        DateTime startLastWeek = startCurrentWeek.subtract(Duration(days: 7));
+        int i = 0;
+        do {
+          DateTime dateSelect = startLastWeek.add(Duration(days: i));
+          var dateValue = _getDateValue(dateSelect);
+          dateValues.add(dateValue);
+          i++;
+        } while (i <= 6);
+        break;
+    }
+    return dateValues;
+  }
+
+  EventHistoryDomainModel _mapHistory(EventHistoryDataModel history) {
+    return EventHistoryDomainModel(
+        history.eventId,
+        history.eventName,
+        history.doneTime,
+        history.expiredHour,
+        history.expiredMinute,
+        history.createdTime,
+        _mapStatus(history.status));
+  }
+
+  int _getNowMilliseconds() {
+    return DateTime.now().toUtc().millisecondsSinceEpoch;
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/presentation/AddEventScreen.dart';
+import 'package:flutter_app/presentation/HistoryScreen.dart';
 import 'package:flutter_app/presentation/MainScreen.dart';
 
 void main() => runApp(MyApp());
@@ -16,7 +17,8 @@ class MyApp extends StatelessWidget {
       initialRoute: "/",
       routes: {
         "/": (context) => MainScreen(),
-        "/add_event": (context) => AddEventScreen()
+        "/add_event": (context) => AddEventScreen(),
+        "/task_history": (context) => HistoryScreen(),
       },
     );
   }

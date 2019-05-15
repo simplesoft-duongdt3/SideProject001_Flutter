@@ -27,3 +27,19 @@ class AddEventPresentationModel {
       this.expiredMinute, this.monday, this.tuesday, this.wednesday,
       this.thursday, this.friday, this.saturday, this.sunday);
 }
+
+class TaskHistoryPresentationModel {
+  int eventId;
+  String eventName;
+  int doneTime;
+  int expiredHour;
+  int expiredMinute;
+  int createdTime;
+  TaskStatus status;
+
+  TaskHistoryPresentationModel(this.eventId, this.eventName, this.doneTime,
+      this.expiredHour, this.expiredMinute, this.createdTime,
+      this.status);
+
+
+}

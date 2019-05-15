@@ -98,13 +98,32 @@ class DoneEventDomainModel {
 }
 
 class EventHistoryDomainModel {
-  int eventId;
-  String eventName;
-  bool isDone;
-  int doneTime;
-  int expiredHourMinute;
-  int expiredMinute;
-  int createdTime;
+  int _eventId;
+  String _eventName;
+  int _doneTime;
+  int _expiredHour;
+  int _expiredMinute;
+  int _createdTime;
+  TaskStatus _status;
+
+  EventHistoryDomainModel(this._eventId, this._eventName, this._doneTime,
+      this._expiredHour, this._expiredMinute, this._createdTime,
+      this._status);
+
+  TaskStatus get status => _status;
+
+  int get createdTime => _createdTime;
+
+  int get expiredMinute => _expiredMinute;
+
+  int get expiredHour => _expiredHour;
+
+  int get doneTime => _doneTime;
+
+  String get eventName => _eventName;
+
+  int get eventId => _eventId;
+
 }
 
 class EventHistoryStatus {
@@ -116,7 +135,5 @@ enum ReportTimeEnum {
   YESTERDAY,
   THIS_WEEK,
   LAST_WEEK,
-  THIS_MONTH,
-  LAST_MONTH
 }
 

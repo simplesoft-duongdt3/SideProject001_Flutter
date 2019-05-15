@@ -25,6 +25,14 @@ class MainScreenState extends State<MainScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(_title),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.history),
+            onPressed: () {
+              _onHistoryClicked();
+            },
+          ),
+        ],
       ),
       body: Center(
         child: buildContentWidget(context),
@@ -192,5 +200,9 @@ class MainScreenState extends State<MainScreen> {
 
   Future<void> _refreshData() async {
     setState(() {});
+  }
+
+  void _onHistoryClicked() {
+    Navigator.pushNamed(context, '/task_history');
   }
 }
