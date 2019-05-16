@@ -1,6 +1,6 @@
 # flutter_app
 
-SideProject001_EnglishLearning
+SideProject001 Flutter Tiny Task Manager App
 
 ## Getting Started
 
