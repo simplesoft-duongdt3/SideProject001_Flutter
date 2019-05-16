@@ -2,10 +2,9 @@ import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_app/presentation/bloc/AddTaskScreenBloc.dart';
+import 'package:flutter_app/presentation/model/PresentationModel.dart';
 import 'package:intl/intl.dart';
-
-import 'bloc/AddTaskScreenBloc.dart';
-import 'model/PresentationModel.dart';
 
 class AddEventScreen extends StatefulWidget {
   AddEventScreen({Key key}) : super(key: key);

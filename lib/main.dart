@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/presentation/AddEventScreen.dart';
-import 'package:flutter_app/presentation/HistoryScreen.dart';
-import 'package:flutter_app/presentation/MainScreen.dart';
+import 'package:flutter_app/presentation/screen/AddEventScreen.dart';
+import 'package:flutter_app/presentation/screen/HistoryScreen.dart';
+import 'package:flutter_app/presentation/screen/MainScreen.dart';
+import 'package:flutter_app/presentation/screen/SignInScreen.dart';
+import 'package:flutter_app/presentation/screen/SignUpScreen.dart';
+import 'package:flutter_app/presentation/screen/SplashScreen.dart';
 
 void main() => runApp(MyApp());
 
@@ -16,9 +19,12 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: "/",
       routes: {
-        "/": (context) => MainScreen(),
+        "/": (context) => SplashScreen(),
+        "/main": (context) => MainScreen(),
         "/add_event": (context) => AddEventScreen(),
         "/task_history": (context) => HistoryScreen(),
+        "/signup": (context) => SignUpScreen(),
+        "/signin": (context) => SignInScreen(),
       },
     );
   }
