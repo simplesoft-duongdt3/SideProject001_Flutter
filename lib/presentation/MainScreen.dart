@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_app/domain/DomainModel.dart';
 import 'package:flutter_app/presentation/bloc/MainScreenBloc.dart';
 import 'package:flutter_app/presentation/model/PresentationModel.dart';
+import 'package:intl/intl.dart';
 
 class MainScreen extends StatefulWidget {
   MainScreen({Key key}) : super(key: key);
@@ -17,7 +18,7 @@ class MainScreenState extends State<MainScreen> {
   final String _title;
   final MainScreenBloc _mainScreenBloc = MainScreenBloc();
   bool isLoading = true;
-
+  var timeFormat = new NumberFormat("00", "en_US");
   MainScreenState(this._title);
 
   @override
@@ -122,7 +123,7 @@ class MainScreenState extends State<MainScreen> {
         event.name,
       ),
       subtitle: Text(
-        '${event.expiredHour}:${event.expiredMinute}',
+        '${timeFormat.format(event.expiredHour)}:${timeFormat.format(event.expiredMinute)}',
       ),
       trailing: buildStatusWidget(event),
     );
@@ -139,19 +140,6 @@ class MainScreenState extends State<MainScreen> {
             child: Icon(
               Icons.done,
               color: Colors.green,
-              size: 32,
-            )),
-      );
-    } else if (event.status == TaskStatus.OUT_OF_TIME) {
-      return InkWell(
-        onTap: () {
-          _onDoneTaskClicked(event);
-        },
-        child: Padding(
-            padding: EdgeInsets.all(4),
-            child: Icon(
-              Icons.alarm_off,
-              color: Colors.red,
               size: 32,
             )),
       );

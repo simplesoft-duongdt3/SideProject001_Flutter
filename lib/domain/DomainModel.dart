@@ -28,7 +28,7 @@ class EventDomainModel {
 enum TaskStatus {
   TODO,
   DONE,
-  OUT_OF_TIME
+  DONE_LATE
 }
 
 class SaveEventDomainModel {
@@ -131,9 +131,8 @@ class EventHistoryStatus {
 }
 
 enum ReportTimeEnum {
-  TODAY,
-  YESTERDAY,
-  THIS_WEEK,
   LAST_WEEK,
+  YESTERDAY,
+  TODAY
 }
 

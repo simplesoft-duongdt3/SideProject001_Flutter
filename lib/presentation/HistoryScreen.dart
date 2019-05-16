@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_app/domain/DomainModel.dart';
 import 'package:flutter_app/presentation/model/PresentationModel.dart';
+import 'package:intl/intl.dart';
 
 import 'bloc/HistoryScreenBloc.dart';
 
@@ -17,27 +18,58 @@ class HistoryScreen extends StatefulWidget {
 class HistoryScreenState extends State<HistoryScreen> {
   final String _title;
   final HistoryScreenBloc _mainScreenBloc = HistoryScreenBloc();
-  bool isLoading = true;
+  var timeFormat = new NumberFormat("00", "en_US");
 
-  ReportTimeEnum _reportTime = ReportTimeEnum.TODAY;
+  final List<ReportTimeEnum> _reportTabs = [ReportTimeEnum.LAST_WEEK, ReportTimeEnum.YESTERDAY, ReportTimeEnum.TODAY];
+  //default today tab
+  final int _initTabPos = 2;
 
   HistoryScreenState(this._title);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(_title),
-      ),
-      body: Center(
-        child: buildContentWidget(context),
+    return DefaultTabController(
+      initialIndex: _initTabPos,
+      length: _reportTabs.length,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(_title),
+          bottom: TabBar(
+            tabs: _buildTabs(),
+          ),
+        ),
+        body: TabBarView(
+          children: _createTabViews(context),
+        ),
       ),
     );
   }
 
-  Widget buildContentWidget(BuildContext context) {
+  List<Widget> _buildTabs() {
+    return <Widget>[
+      for(var report in _reportTabs) _createTabReport(report)
+    ];
+  }
+
+  Widget _createTabReport(ReportTimeEnum report) {
+    switch(report) {
+
+      case ReportTimeEnum.TODAY:
+        return Tab(text: "Today");
+        break;
+      case ReportTimeEnum.YESTERDAY:
+        return Tab(text: "Yesterday");
+        break;
+      case ReportTimeEnum.LAST_WEEK:
+        return Tab(text: "Last week");
+        break;
+    }
+    return Tab(text: "Unknown");
+  }
+
+  Widget _buildContentWidget(BuildContext context, ReportTimeEnum reportTime) {
     return FutureBuilder<List<TaskHistoryPresentationModel>>(
-      future: _mainScreenBloc.loadHistoryList(_reportTime),
+      future: _mainScreenBloc.loadHistoryList(reportTime),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return buildLoadingWidget();
@@ -112,7 +144,7 @@ class HistoryScreenState extends State<HistoryScreen> {
         history.eventName,
       ),
       subtitle: Text(
-        '${history.expiredHour}:${history.expiredMinute}',
+          '${timeFormat.format(history.expiredHour)}:${timeFormat.format(history.expiredMinute)}',
       ),
       trailing: Text(
         _mapTextFromStatus(history.status),
@@ -127,17 +159,22 @@ class HistoryScreenState extends State<HistoryScreen> {
 
   String _mapTextFromStatus(TaskStatus status) {
     switch(status) {
-
       case TaskStatus.TODO:
         return "To do";
         break;
       case TaskStatus.DONE:
         return "Done";
         break;
-      case TaskStatus.OUT_OF_TIME:
-        return "Out of time";
+      case TaskStatus.DONE_LATE:
+        return "Done late";
         break;
     }
     return "Unknown";
+  }
+
+  List<Widget> _createTabViews(BuildContext context) {
+    return [
+      for(var report in _reportTabs) _buildContentWidget(context, report)
+    ];
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter_app/domain/DomainModel.dart';
 import 'package:flutter_app/domain/Repository.dart';
+import 'package:flutter_app/domain/Util.dart';
 
 import 'DataModel.dart';
 
@@ -16,11 +17,13 @@ class EventRepositoryImpl implements EventRepository {
     int updatedTime = 0;
     int enableTimeStart = nowMilliseconds;
     int enableTimeEnd = 0;
+    var taskTimeExpired = Util.calcTaskTimeExpired(saveEventDataModel.expiredHour, saveEventDataModel.expiredMinute);
     EventDataModel eventDataModel = EventDataModel(
         nextItemId,
         saveEventDataModel.name,
         saveEventDataModel.expiredHour,
         saveEventDataModel.expiredMinute,
+        taskTimeExpired,
         defaultEventEnable,
         enableTimeStart,
         enableTimeEnd,
@@ -86,16 +89,34 @@ class EventRepositoryImpl implements EventRepository {
     if (findHistory != null) {
       var nowMilliseconds = _getNowMilliseconds();
       findHistory.doneTime = nowMilliseconds;
-      findHistory.status = EventHistoryDataModel.STATUS_DONE;
+      findHistory.status = _getDoneStatus(findHistory);
     }
+  }
+
+  int _getDoneStatus(EventHistoryDataModel findHistory) {
+    int status = EventHistoryDataModel.STATUS_DONE;
+    var now = DateTime.now();
+    var currentTime = (now.hour * 100) + now.minute;
+    var taskExpiredTime = findHistory.expiredTime;
+    if (currentTime > taskExpiredTime) {
+      status = EventHistoryDataModel.STATUS_DONE_LATE;
+    }
+
+    return status;
   }
 
   @override
   Future<List<EventHistoryDomainModel>> getEventHistoryReport(
       ReportTimeEnum reportTimeEnum) async {
     List<int> dateValues = _getReportDateValues(reportTimeEnum);
-    return databaseHistoryFake
+
+
+
+    var histories = databaseHistoryFake
         .where((history) => dateValues.contains(history.date))
+        .toList(growable: false);
+    histories.sort((a, b) => a.expiredTime.compareTo(b.expiredTime));
+    return histories
         .map((history) => _mapHistory(history))
         .toList(growable: false);
   }
@@ -105,8 +126,11 @@ class EventRepositoryImpl implements EventRepository {
     await _createTodayHistoryEventsIfNeed();
 
     var dateValueToday = _getDateValueToday();
-    List<EventDomainModel> matchedEvents = databaseHistoryFake
+    var foundTasks = databaseHistoryFake
         .where((history) => history.date == dateValueToday)
+        .toList(growable: true);
+    foundTasks.sort((a, b) => a.expiredTime.compareTo(b.expiredTime));
+    List<EventDomainModel> matchedEvents = foundTasks
         .map((eventDataModel) => _mapEventDataToEventDomain(eventDataModel))
         .toList(growable: true);
     return matchedEvents;
@@ -215,6 +239,7 @@ class EventRepositoryImpl implements EventRepository {
       doneTime,
       task.expiredHour,
       task.expiredMinute,
+      task.expiredTime,
       createdTime,
       dateValue,
       EventHistoryDataModel.STATUS_TODO,
@@ -248,8 +273,8 @@ class EventRepositoryImpl implements EventRepository {
   TaskStatus _mapStatus(int status) {
     if (status == EventHistoryDataModel.STATUS_DONE) {
       return TaskStatus.DONE;
-    } else if (status == EventHistoryDataModel.STATUS_OUT_OF_TIME) {
-      return TaskStatus.OUT_OF_TIME;
+    } else if (status == EventHistoryDataModel.STATUS_DONE_LATE) {
+      return TaskStatus.DONE_LATE;
     } else {
       return TaskStatus.TODO;
     }
@@ -266,16 +291,6 @@ class EventRepositoryImpl implements EventRepository {
       case ReportTimeEnum.YESTERDAY:
         DateTime dateSelect = now.subtract(Duration(days: 1));
         dateValues.add(_getDateValue(dateSelect));
-        break;
-      case ReportTimeEnum.THIS_WEEK:
-        DateTime startWeek = now.subtract(Duration(days: now.weekday - 1));
-        int i = 0;
-        do {
-          DateTime dateSelect = startWeek.add(Duration(days: i));
-          var dateValue = _getDateValue(dateSelect);
-          dateValues.add(dateValue);
-          i++;
-        } while (i <= 6);
         break;
       case ReportTimeEnum.LAST_WEEK:
         DateTime startCurrentWeek =
