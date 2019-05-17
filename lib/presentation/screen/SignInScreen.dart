@@ -36,18 +36,28 @@ class _GoogleSignInSectionState extends State<_GoogleSignInSection> {
     return Container(
       color: Colors.white,
       child: Center(
-        child: InkWell(
-          onTap: () async {
-            bool isLoginSuccess = await _signInScreenBloc.signInWithGoogleAccount();
-            if (isLoginSuccess) {
-              _goToHomeScreen();
-            }
-          },
-          child: const Image(
-            image: AssetImage('assets/images/btn_google_signin.png'),
-            width: 300,
-            height: 230,
-          ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Image(
+              image: AssetImage('assets/images/logo_tiny_task.png'),
+              width: 200,
+              height: 200,
+            ),
+            InkWell(
+              onTap: () async {
+                bool isLoginSuccess = await _signInScreenBloc.signInWithGoogleAccount();
+                if (isLoginSuccess) {
+                  _goToHomeScreen();
+                }
+              },
+              child: const Image(
+                image: AssetImage('assets/images/btn_google_signin.png'),
+                width: 200,
+                height: 100,
+              ),
+            ),
+          ],
         ),
       ),
     );
