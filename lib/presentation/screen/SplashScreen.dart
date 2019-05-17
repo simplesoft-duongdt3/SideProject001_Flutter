@@ -4,7 +4,6 @@ import 'package:flutter_app/data/FirebaseController.dart';
 import '../../main.dart';
 
 class SplashScreen extends StatefulWidget {
-
   @override
   State<StatefulWidget> createState() {
     return SplashScreenState();
@@ -13,6 +12,7 @@ class SplashScreen extends StatefulWidget {
 
 class SplashScreenState extends State<SplashScreen> {
   final FireAuthController _fireAuthController = diResolver.resolve();
+
   @override
   void initState() {
     super.initState();
@@ -25,7 +25,9 @@ class SplashScreenState extends State<SplashScreen> {
       color: Colors.white,
       child: Center(
         child: Image(
-            image: AssetImage('assets/images/logo.png')
+          image: AssetImage('assets/images/logo_tiny_task.png'),
+          width: 240,
+          height: 240,
         ),
       ),
     );
