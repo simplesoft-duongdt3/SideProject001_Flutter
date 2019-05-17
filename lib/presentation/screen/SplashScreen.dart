@@ -34,7 +34,7 @@ class SplashScreenState extends State<SplashScreen> {
   }
 
   void _navigatorToNextScreen() async {
-    await Future.delayed(const Duration(seconds: 2));
+    await Future.delayed(const Duration(microseconds: 1500));
     bool isLogin = await _fireAuthController.isLogin();
     if (isLogin) {
       Navigator.of(context).pushReplacementNamed("/main");

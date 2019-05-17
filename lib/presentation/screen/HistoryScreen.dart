@@ -70,26 +70,28 @@ class HistoryScreenState extends State<HistoryScreen> {
   }
 
   Widget _buildContentWidget(BuildContext context, ReportTimeEnum reportTime) {
-    return FutureBuilder<List<TaskHistoryPresentationModel>>(
-      future: _mainScreenBloc.loadHistoryList(reportTime),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return buildLoadingWidget();
-        } else {
-          if (snapshot.connectionState == ConnectionState.done) {
-            if (snapshot.hasData) {
-              List<TaskHistoryPresentationModel> eventList = snapshot.data;
-              if (eventList.isEmpty) {
-                return buildEmptyListWidget();
+    return Center(
+      child: FutureBuilder<List<TaskHistoryPresentationModel>>(
+        future: _mainScreenBloc.loadHistoryList(reportTime),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return buildLoadingWidget();
+          } else {
+            if (snapshot.connectionState == ConnectionState.done) {
+              if (snapshot.hasData) {
+                List<TaskHistoryPresentationModel> eventList = snapshot.data;
+                if (eventList.isEmpty) {
+                  return buildEmptyListWidget();
+                } else {
+                  return buildListWidget(eventList);
+                }
               } else {
-                return buildListWidget(eventList);
+                return buildErrorWidget();
               }
-            } else {
-              return buildErrorWidget();
             }
           }
-        }
-      },
+        },
+      ),
     );
   }
 
