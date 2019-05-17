@@ -1,105 +1,134 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_app/domain/DomainModel.dart';
 import 'package:flutter_app/domain/Repository.dart';
 import 'package:flutter_app/domain/Util.dart';
 
-import 'DataModel.dart';
+import '../main.dart';
+import 'FirebaseController.dart';
+import 'FirebaseDataModel.dart';
+
+class UserRepositoryImpl implements UserRepository {
+  FireAuthController _fireAuthController = diResolver.resolve();
+  FireDatabaseController _fireDatabaseController = diResolver.resolve();
+
+  @override
+  Future<void> signInWithGoogleAccount() async {
+    await _fireAuthController.signInWithGoogle();
+
+    LoginUserFirebaseDataModel loginUser = await _fireAuthController.getLoginUser();
+    if (loginUser != null) {
+      DataSnapshot userData = await _fireDatabaseController.reference().child("user/${loginUser.uid}").once();
+      if (userData.value == null) {
+        await _fireDatabaseController.reference().child("user/${loginUser.uid}").set(loginUser.toJson());
+      }
+    }
+  }
+
+  @override
+  Future<void> logout() async {
+    await _fireAuthController.signOut();
+  }
+
+  @override
+  Future<bool> isLogin() async {
+    var isLogin = await _fireAuthController.isLogin();
+    return isLogin;
+  }
+}
 
 class EventRepositoryImpl implements EventRepository {
-  static List<EventDataModel> databaseEventFake = [];
-  static List<EventHistoryDataModel> databaseHistoryFake = [];
+  FireDatabaseController _fireDatabaseController = diResolver.resolve();
+  FireAuthController _fireAuthController = diResolver.resolve();
+
+  //final List<EventFirebaseDataModel> databaseEventFake = [];
+  //final List<EventHistoryFirebaseDataModel> databaseHistoryFake = [];
 
   @override
   Future<void> createEvent(SaveEventDomainModel saveEventDataModel) async {
-    int nextItemId = _getTaskNextItemId();
-    bool defaultEventEnable = true;
-    var nowMilliseconds = _getNowMilliseconds();
-    int createdTime = nowMilliseconds;
-    int updatedTime = 0;
-    int enableTimeStart = nowMilliseconds;
-    int enableTimeEnd = 0;
-    var taskTimeExpired = Util.calcTaskTimeExpired(saveEventDataModel.expiredHour, saveEventDataModel.expiredMinute);
-    EventDataModel eventDataModel = EventDataModel(
-        nextItemId,
-        saveEventDataModel.name,
-        saveEventDataModel.expiredHour,
-        saveEventDataModel.expiredMinute,
-        taskTimeExpired,
-        defaultEventEnable,
-        enableTimeStart,
-        enableTimeEnd,
-        createdTime,
-        updatedTime,
-        saveEventDataModel.monday,
-        saveEventDataModel.tuesday,
-        saveEventDataModel.wednesday,
-        saveEventDataModel.thursday,
-        saveEventDataModel.friday,
-        saveEventDataModel.saturday,
-        saveEventDataModel.sunday);
+    LoginUserFirebaseDataModel loginUser = await _fireAuthController.getLoginUser();
+    if (loginUser != null) {
+      bool defaultEventEnable = true;
+      var nowMilliseconds = _getNowMilliseconds();
+      int createdTime = nowMilliseconds;
+      int updatedTime = 0;
+      int enableTimeStart = nowMilliseconds;
+      int enableTimeEnd = 0;
+      var taskTimeExpired = Util.calcTaskTimeExpired(
+          saveEventDataModel.expiredHour, saveEventDataModel.expiredMinute);
+      EventFirebaseDataModel eventDataModel = EventFirebaseDataModel(
+          saveEventDataModel.name,
+          saveEventDataModel.expiredHour,
+          saveEventDataModel.expiredMinute,
+          taskTimeExpired,
+          defaultEventEnable,
+          enableTimeStart,
+          enableTimeEnd,
+          createdTime,
+          updatedTime,
+          saveEventDataModel.monday,
+          saveEventDataModel.tuesday,
+          saveEventDataModel.wednesday,
+          saveEventDataModel.thursday,
+          saveEventDataModel.friday,
+          saveEventDataModel.saturday,
+          saveEventDataModel.sunday);
 
-    databaseEventFake.add(eventDataModel);
-  }
-
-  int _getTaskNextItemId() {
-    int nextItemId = 0;
-    var lastItem = databaseEventFake.isEmpty
-        ? null
-        : databaseEventFake[databaseEventFake.length - 1];
-    if (lastItem != null) {
-      nextItemId = lastItem.id + 1;
-    } else {
-      nextItemId = 1;
+      var pushTask = _fireDatabaseController.reference().child("task/${loginUser.uid}").push();
+      await pushTask.set(eventDataModel.toJson());
     }
-    return nextItemId;
-  }
-
-  int _getHistoryNextItemId() {
-    int nextItemId = 0;
-    var lastItem = databaseHistoryFake.isEmpty
-        ? null
-        : databaseHistoryFake[databaseHistoryFake.length - 1];
-    if (lastItem != null) {
-      nextItemId = lastItem.id + 1;
-    } else {
-      nextItemId = 1;
-    }
-    return nextItemId;
   }
 
   @override
   Future<void> disableEvent(
       DisableEventDomainModel disableEventDataModel) async {
-    var checkCurrentEventId =
-        (event) => event.eventId == disableEventDataModel.eventId;
-    var findEvent =
-        databaseEventFake.firstWhere(checkCurrentEventId, orElse: () => null);
-    if (findEvent != null) {
-      var nowMilliseconds = _getNowMilliseconds();
-      findEvent.enable = false;
-      findEvent.enableTimeEnd = nowMilliseconds;
-      findEvent.updateTime = nowMilliseconds;
+
+    LoginUserFirebaseDataModel loginUser = await _fireAuthController.getLoginUser();
+    if (loginUser != null) {
+      var uid = loginUser.uid;
+      var taskPath = "task/$uid/${disableEventDataModel.eventId}";
+      DataSnapshot historyData = await _fireDatabaseController.reference().child(taskPath).once();
+      if (historyData.value != null) {
+        var nowMilliseconds = _getNowMilliseconds();
+        var updateTime = nowMilliseconds;
+        var enableTimeEnd = nowMilliseconds;
+        await _fireDatabaseController.reference().child(taskPath).update({
+          "enable": false,
+          "enableTimeEnd": enableTimeEnd,
+          "updateTime": updateTime,
+        });
+      }
     }
   }
 
   @override
   Future<void> doneEvent(DoneEventDomainModel doneEventDomainModel) async {
-    var findHistory = databaseHistoryFake.firstWhere(
-        (history) => history.id == doneEventDomainModel.historyId,
-        orElse: () => null);
-    if (findHistory != null) {
-      var nowMilliseconds = _getNowMilliseconds();
-      findHistory.doneTime = nowMilliseconds;
-      findHistory.status = _getDoneStatus(findHistory);
+    LoginUserFirebaseDataModel loginUser = await _fireAuthController.getLoginUser();
+    if (loginUser != null) {
+      var uid = loginUser.uid;
+      var historyPath = "task_history/$uid/${doneEventDomainModel.historyId}";
+      DataSnapshot historyData = await _fireDatabaseController.reference().child(historyPath).once();
+      if (historyData.value != null) {
+        var findHistory = EventHistoryFirebaseDataModel.from(historyData.key, historyData.value);
+        var nowMilliseconds = _getNowMilliseconds();
+        var doneTime = nowMilliseconds;
+        var status = _getDoneStatus(findHistory);
+        var updateTime = nowMilliseconds;
+        await _fireDatabaseController.reference().child(historyPath).update({
+          "updateTime": updateTime,
+          "doneTime": doneTime,
+          "status": status,
+        });
+      }
     }
   }
 
-  int _getDoneStatus(EventHistoryDataModel findHistory) {
-    int status = EventHistoryDataModel.STATUS_DONE;
+  int _getDoneStatus(EventHistoryFirebaseDataModel findHistory) {
+    int status = EventHistoryFirebaseDataModel.STATUS_DONE;
     var now = DateTime.now();
     var currentTime = (now.hour * 100) + now.minute;
     var taskExpiredTime = findHistory.expiredTime;
     if (currentTime > taskExpiredTime) {
-      status = EventHistoryDataModel.STATUS_DONE_LATE;
+      status = EventHistoryFirebaseDataModel.STATUS_DONE_LATE;
     }
 
     return status;
@@ -108,36 +137,72 @@ class EventRepositoryImpl implements EventRepository {
   @override
   Future<List<EventHistoryDomainModel>> getEventHistoryReport(
       ReportTimeEnum reportTimeEnum) async {
-    List<int> dateValues = _getReportDateValues(reportTimeEnum);
+    List<EventHistoryDomainModel> results = [];
+    LoginUserFirebaseDataModel loginUser = await _fireAuthController.getLoginUser();
+    if (loginUser != null) {
+      var uid = loginUser.uid;
+      await _createTodayHistoryEventsIfNeed(uid);
+      List<int> dateValues = _getReportDateValues(reportTimeEnum);
+      List<EventHistoryFirebaseDataModel> foundHistories = [];
+      for(var findDate in dateValues) {
+        await _fireDatabaseController.reference().child("task_history/$uid").orderByChild("date").equalTo(findDate).once().then((DataSnapshot dataSnapshot) {
+          if (dataSnapshot.value != null) {
+            Map<dynamic, dynamic> values = dataSnapshot.value;
+            values.forEach((key, values) {
+              foundHistories.add(EventHistoryFirebaseDataModel.from(key, values));
+            });
+          }
+        });
+      }
 
+      foundHistories.sort((a, b) {
+        var dateCompareTo = a.date.compareTo(b.date);
+        if (dateCompareTo == 0) {
+          return a.expiredTime.compareTo(b.expiredTime);
+        }
+        return dateCompareTo;
+      });
 
-
-    var histories = databaseHistoryFake
-        .where((history) => dateValues.contains(history.date))
-        .toList(growable: false);
-    histories.sort((a, b) => a.expiredTime.compareTo(b.expiredTime));
-    return histories
-        .map((history) => _mapHistory(history))
-        .toList(growable: false);
+      results = foundHistories
+          .map((history) => _mapHistory(history))
+          .toList(growable: true);
+    }
+    return results;
   }
 
   @override
   Future<List<EventDomainModel>> getTodayEvents() async {
-    await _createTodayHistoryEventsIfNeed();
+    List<EventDomainModel> matchedEvents = [];
+    LoginUserFirebaseDataModel loginUser = await _fireAuthController.getLoginUser();
+    if (loginUser != null) {
+      var uid = loginUser.uid;
+      await _createTodayHistoryEventsIfNeed(uid);
 
-    var dateValueToday = _getDateValueToday();
-    var foundTasks = databaseHistoryFake
-        .where((history) => history.date == dateValueToday)
-        .toList(growable: true);
-    foundTasks.sort((a, b) => a.expiredTime.compareTo(b.expiredTime));
-    List<EventDomainModel> matchedEvents = foundTasks
-        .map((eventDataModel) => _mapEventDataToEventDomain(eventDataModel))
-        .toList(growable: true);
+      var dateValueToday = _getDateValueToday();
+      List<EventHistoryFirebaseDataModel> foundHistories = [];
+      await _fireDatabaseController.reference().child("task_history/$uid").orderByChild("date").equalTo(dateValueToday).once().then((DataSnapshot dataSnapshot) {
+        if (dataSnapshot.value != null) {
+          Map<dynamic, dynamic> values = dataSnapshot.value;
+          values.forEach((key, values) {
+            foundHistories.add(EventHistoryFirebaseDataModel.from(key, values));
+          });
+        }
+      });
+
+      foundHistories = foundHistories
+          .where((history) => history.status == EventHistoryFirebaseDataModel.STATUS_TODO)
+          .toList(growable: true);
+      foundHistories.sort((a, b) => a.expiredTime.compareTo(b.expiredTime));
+      matchedEvents = foundHistories
+          .map((eventDataModel) => _mapEventDataToEventDomain(eventDataModel))
+          .toList(growable: true);
+      return matchedEvents;
+    }
     return matchedEvents;
   }
 
   EventDomainModel _mapEventDataToEventDomain(
-      EventHistoryDataModel historyModel) {
+      EventHistoryFirebaseDataModel historyModel) {
     return EventDomainModel(
         historyModel.eventId,
         historyModel.id,
@@ -174,7 +239,7 @@ class EventRepositoryImpl implements EventRepository {
     return result;
   }
 
-  bool _checkWeekdayInToday(EventDataModel event) {
+  bool _checkWeekdayInToday(EventFirebaseDataModel event) {
     var nowWeekday = DateTime.now().weekday;
     if (nowWeekday == DateTime.monday) {
       return event.monday;
@@ -201,16 +266,25 @@ class EventRepositoryImpl implements EventRepository {
     return false;
   }
 
-  Future<void> _createTodayHistoryEventsIfNeed() async {
-    List<EventDataModel> matchedTasks = databaseEventFake
+  Future<void> _createTodayHistoryEventsIfNeed(String uid) async {
+    List<EventFirebaseDataModel> matchedTasks = [];
+    await _fireDatabaseController.reference().child("task/$uid").once().then((DataSnapshot dataSnapshot) {
+      if (dataSnapshot.value != null) {
+        Map<dynamic, dynamic> values = dataSnapshot.value;
+        values.forEach((key, values) {
+          matchedTasks.add(EventFirebaseDataModel.from(key, values));
+        });
+      }
+    });
+    matchedTasks = matchedTasks
         .where((event) => event.enable && _checkWeekdayInToday(event))
         .toList(growable: true);
     int dateValue = _getDateValueToday();
 
     var listOfTaskId = [for (var task in matchedTasks) task.id];
 
-    List<EventHistoryDataModel> todayHistoryModels =
-        _findTodayHistoryModels(listOfTaskId, dateValue);
+    List<EventHistoryFirebaseDataModel> todayHistoryModels = await
+        _findTodayHistoryModels(listOfTaskId, dateValue, uid);
     for (var task in matchedTasks) {
       bool isCreateHistory = true;
       var history = todayHistoryModels.firstWhere(
@@ -221,19 +295,17 @@ class EventRepositoryImpl implements EventRepository {
       }
 
       if (isCreateHistory) {
-        _createHistory(task, dateValue);
+        _createHistory(task, dateValue,uid);
       }
     }
   }
 
-  void _createHistory(EventDataModel task, int dateValue) {
+  Future<void> _createHistory(EventFirebaseDataModel task, int dateValue, String uid) async {
     var nowMilliseconds = _getNowMilliseconds();
     var doneTime = nowMilliseconds;
     var createdTime = nowMilliseconds;
 
-    int id = _getHistoryNextItemId();
-    EventHistoryDataModel eventHistoryDataModel = EventHistoryDataModel(
-      id,
+    EventHistoryFirebaseDataModel eventHistoryFirebaseDataModel = EventHistoryFirebaseDataModel(
       task.id,
       task.name,
       doneTime,
@@ -242,9 +314,11 @@ class EventRepositoryImpl implements EventRepository {
       task.expiredTime,
       createdTime,
       dateValue,
-      EventHistoryDataModel.STATUS_TODO,
+      EventHistoryFirebaseDataModel.STATUS_TODO,
     );
-    databaseHistoryFake.add(eventHistoryDataModel);
+
+    var pushTaskHistory = _fireDatabaseController.reference().child("task_history/$uid").push();
+    await pushTaskHistory.set(eventHistoryFirebaseDataModel.toJson());
   }
 
   int _getDateValueToday() {
@@ -262,18 +336,30 @@ class EventRepositoryImpl implements EventRepository {
     return dateValue;
   }
 
-  List<EventHistoryDataModel> _findTodayHistoryModels(
-      List<int> listOfTaskId, int dateValue) {
-    return databaseHistoryFake
+  Future<List<EventHistoryFirebaseDataModel>> _findTodayHistoryModels(
+      List<String> listOfTaskId, int dateValue, String uid) async {
+
+    List<EventHistoryFirebaseDataModel> foundHistories = [];
+    await _fireDatabaseController.reference().child("task_history/$uid").orderByChild("date").equalTo(dateValue).once().then((DataSnapshot dataSnapshot) {
+      if (dataSnapshot.value != null) {
+        Map<dynamic, dynamic> values = dataSnapshot.value;
+        values.forEach((key, values) {
+          foundHistories.add(EventHistoryFirebaseDataModel.from(key, values));
+        });
+      }
+    });
+    foundHistories = foundHistories
         .where((history) =>
             history.date == dateValue && listOfTaskId.contains(history.eventId))
         .toList(growable: true);
+
+    return foundHistories;
   }
 
   TaskStatus _mapStatus(int status) {
-    if (status == EventHistoryDataModel.STATUS_DONE) {
+    if (status == EventHistoryFirebaseDataModel.STATUS_DONE) {
       return TaskStatus.DONE;
-    } else if (status == EventHistoryDataModel.STATUS_DONE_LATE) {
+    } else if (status == EventHistoryFirebaseDataModel.STATUS_DONE_LATE) {
       return TaskStatus.DONE_LATE;
     } else {
       return TaskStatus.TODO;
@@ -308,7 +394,7 @@ class EventRepositoryImpl implements EventRepository {
     return dateValues;
   }
 
-  EventHistoryDomainModel _mapHistory(EventHistoryDataModel history) {
+  EventHistoryDomainModel _mapHistory(EventHistoryFirebaseDataModel history) {
     return EventHistoryDomainModel(
         history.eventId,
         history.eventName,
@@ -321,5 +407,11 @@ class EventRepositoryImpl implements EventRepository {
 
   int _getNowMilliseconds() {
     return DateTime.now().toUtc().millisecondsSinceEpoch;
+  }
+
+  @override
+  Future<void> logout() {
+
+    return null;
   }
 }

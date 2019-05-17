@@ -5,6 +5,8 @@ import 'package:flutter_app/presentation/bloc/HistoryScreenBloc.dart';
 import 'package:flutter_app/presentation/model/PresentationModel.dart';
 import 'package:intl/intl.dart';
 
+import '../../main.dart';
+
 
 class HistoryScreen extends StatefulWidget {
   HistoryScreen({Key key}) : super(key: key);
@@ -17,7 +19,7 @@ class HistoryScreen extends StatefulWidget {
 
 class HistoryScreenState extends State<HistoryScreen> {
   final String _title;
-  final HistoryScreenBloc _mainScreenBloc = HistoryScreenBloc();
+  final HistoryScreenBloc _mainScreenBloc = diResolver.resolve();
   var timeFormat = new NumberFormat("00", "en_US");
 
   final List<ReportTimeEnum> _reportTabs = [ReportTimeEnum.LAST_WEEK, ReportTimeEnum.YESTERDAY, ReportTimeEnum.TODAY];

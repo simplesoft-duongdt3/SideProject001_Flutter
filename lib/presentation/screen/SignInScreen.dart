@@ -1,12 +1,10 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter_app/presentation/bloc/SignInScreenBloc.dart';
 
-final FirebaseAuth _auth = FirebaseAuth.instance;
-final GoogleSignIn _googleSignIn = GoogleSignIn();
+import '../../main.dart';
 
 class SignInScreen extends StatefulWidget {
-  final String title = 'Signin';
+  final String title = 'Sign In';
 
   @override
   State<StatefulWidget> createState() => SignInScreenState();
@@ -20,12 +18,7 @@ class SignInScreenState extends State<SignInScreen> {
         title: Text(widget.title),
       ),
       body: Builder(builder: (BuildContext context) {
-        return ListView(
-          scrollDirection: Axis.vertical,
-          children: <Widget>[
-            _GoogleSignInSection(),
-          ],
-        );
+        return _GoogleSignInSection();
       }),
     );
   }
@@ -37,46 +30,30 @@ class _GoogleSignInSection extends StatefulWidget {
 }
 
 class _GoogleSignInSectionState extends State<_GoogleSignInSection> {
-
+  SignInScreenBloc _signInScreenBloc = diResolver.resolve();
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        Container(
-          child: const Text('Test sign in with Google'),
-          padding: const EdgeInsets.all(16),
-          alignment: Alignment.center,
-        ),
-        Container(
-          padding: const EdgeInsets.symmetric(vertical: 16.0),
-          alignment: Alignment.center,
-          child: RaisedButton(
-            onPressed: () async {
-              _signInWithGoogle();
-            },
-            child: const Text('Sign in with Google'),
+    return Container(
+      color: Colors.white,
+      child: Center(
+        child: InkWell(
+          onTap: () async {
+            bool isLoginSuccess = await _signInScreenBloc.signInWithGoogleAccount();
+            if (isLoginSuccess) {
+              _goToHomeScreen();
+            }
+          },
+          child: const Image(
+            image: AssetImage('assets/images/btn_google_signin.png'),
+            width: 300,
+            height: 230,
           ),
         ),
-      ],
+      ),
     );
   }
 
-  void _signOutIfNeed() async {
-    var user = await _auth.currentUser();
-    if (user != null) {
-      await _auth.signOut();
-    }
-  }
-
-  void _signInWithGoogle() async {
-    _signOutIfNeed();
-    final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
-    final GoogleSignInAuthentication googleAuth =
-        await googleUser.authentication;
-    final AuthCredential credential = GoogleAuthProvider.getCredential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-    await _auth.signInWithCredential(credential);
+  void _goToHomeScreen() {
+    Navigator.of(context).pushReplacementNamed('/main');
   }
 }

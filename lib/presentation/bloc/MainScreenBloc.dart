@@ -1,10 +1,12 @@
-import 'package:flutter_app/data/RepositoryImpl.dart';
 import 'package:flutter_app/domain/DomainModel.dart';
 import 'package:flutter_app/domain/Repository.dart';
 import 'package:flutter_app/presentation/model/PresentationModel.dart';
 
+import '../../main.dart';
+
 class MainScreenBloc {
-  EventRepository _eventRepository = EventRepositoryImpl();
+  UserRepository _userRepository = diResolver.resolve();
+  EventRepository _eventRepository = diResolver.resolve();
 
   Future<List<EventPresentationModel>> loadEventList() async {
     var todayEvents = await _eventRepository.getTodayEvents();
@@ -26,7 +28,11 @@ class MainScreenBloc {
         .toList(growable: false);
   }
 
-  Future<void> doneTask(int eventId, int historyId) async {
+  Future<void> doneTask(String eventId, String historyId) async {
     await _eventRepository.doneEvent(DoneEventDomainModel(eventId, historyId));
+  }
+
+  Future<void> logout() async {
+    await _userRepository.logout();
   }
 }

@@ -5,7 +5,10 @@ import 'package:flutter_app/presentation/bloc/MainScreenBloc.dart';
 import 'package:flutter_app/presentation/model/PresentationModel.dart';
 import 'package:intl/intl.dart';
 
+import '../../main.dart';
+
 class MainScreen extends StatefulWidget {
+
   MainScreen({Key key}) : super(key: key);
 
   @override
@@ -16,7 +19,7 @@ class MainScreen extends StatefulWidget {
 
 class MainScreenState extends State<MainScreen> {
   final String _title;
-  final MainScreenBloc _mainScreenBloc = MainScreenBloc();
+  final MainScreenBloc _mainScreenBloc = diResolver.resolve();
   bool isLoading = true;
   var timeFormat = new NumberFormat("00", "en_US");
   MainScreenState(this._title);
@@ -28,20 +31,27 @@ class MainScreenState extends State<MainScreen> {
         title: Text(_title),
         actions: <Widget>[
           IconButton(
+            icon: Icon(Icons.add),
+            onPressed: () {
+              _onAddButtonClicked();
+            },
+          ),
+          IconButton(
             icon: Icon(Icons.history),
             onPressed: () {
               _onHistoryClicked();
+            },
+          ),
+          IconButton(
+            icon: Icon(Icons.exit_to_app),
+            onPressed: () {
+              _onLogoutClicked();
             },
           ),
         ],
       ),
       body: Center(
         child: buildContentWidget(context),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _onAddButtonClicked,
-        tooltip: 'Add task',
-        child: Icon(Icons.add),
       ),
     );
   }
@@ -103,7 +113,7 @@ class MainScreenState extends State<MainScreen> {
     return Center(
       child: InkWell(
         child: Text(
-          "You don't have any tasks, today!\nClick here to reload!",
+          "You don't have any todo tasks, today!\nClick here to reload!",
           textAlign: TextAlign.center,
         ),
         onTap: _refreshData,
@@ -186,11 +196,49 @@ class MainScreenState extends State<MainScreen> {
     );
   }
 
+  void _showConfirmLogoutDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: new Text("Logout?"),
+          content:
+          new Text("Current user will logout when you accept this action! Careful!"),
+          actions: <Widget>[
+            new FlatButton(
+              child: new Text("CLOSE"),
+              onPressed: () {
+                //nothing to do
+                Navigator.of(context).pop();
+              },
+            ),
+            new FlatButton(
+              child: new Text("LOGOUT"),
+              onPressed: () async {
+                await _mainScreenBloc.logout();
+                Navigator.of(context).pop();
+                _gotoSignInScreen();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Future<void> _refreshData() async {
     setState(() {});
   }
 
   void _onHistoryClicked() {
     Navigator.pushNamed(context, '/task_history');
+  }
+
+  void _onLogoutClicked() {
+    _showConfirmLogoutDialog();
+  }
+
+  void _gotoSignInScreen() {
+    Navigator.of(context).pushReplacementNamed('/signin');
   }
 }

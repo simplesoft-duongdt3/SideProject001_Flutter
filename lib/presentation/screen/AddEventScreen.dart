@@ -6,6 +6,8 @@ import 'package:flutter_app/presentation/bloc/AddTaskScreenBloc.dart';
 import 'package:flutter_app/presentation/model/PresentationModel.dart';
 import 'package:intl/intl.dart';
 
+import '../../main.dart';
+
 class AddEventScreen extends StatefulWidget {
   AddEventScreen({Key key}) : super(key: key);
 
@@ -17,7 +19,7 @@ class AddEventScreen extends StatefulWidget {
 
 class _AddEventScreenState extends State<AddEventScreen> {
   final String _title;
-  final AddTaskScreenBloc addTaskScreenBloc = AddTaskScreenBloc();
+  final AddTaskScreenBloc addTaskScreenBloc = diResolver.resolve();
   final GlobalKey<FormState> _addFormKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldState = GlobalKey<ScaffoldState>();
   final _textNameController = TextEditingController(text: "");
@@ -162,10 +164,11 @@ class _AddEventScreenState extends State<AddEventScreen> {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: () => saveButtonClicked(),
         tooltip: "Save event",
-        child: Icon(Icons.save),
+        icon: Icon(Icons.save),
+        label: Text("Save"),
       ),
     );
   }

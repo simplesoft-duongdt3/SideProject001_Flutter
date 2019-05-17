@@ -1,8 +1,8 @@
 import 'package:flutter_app/domain/DomainModel.dart';
 
 class EventPresentationModel {
-  int eventId;
-  int historyId;
+  String eventId;
+  String historyId;
   String name;
   int expiredHour;
   int expiredMinute;
@@ -29,7 +29,7 @@ class AddEventPresentationModel {
 }
 
 class TaskHistoryPresentationModel {
-  int eventId;
+  String eventId;
   String eventName;
   int doneTime;
   int expiredHour;

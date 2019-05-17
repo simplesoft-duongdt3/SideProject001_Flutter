@@ -1,8 +1,8 @@
 import 'dart:core';
 
 class EventDomainModel {
-  int _eventId;
-  int _historyId;
+  String _eventId;
+  String _historyId;
   String _name;
   int _expiredHour;
   int _expiredMinute;
@@ -14,13 +14,13 @@ class EventDomainModel {
 
   String get name => _name;
 
-  int get eventId => _eventId;
+  String get eventId => _eventId;
 
   int get expiredMinute => _expiredMinute;
 
   int get expiredHour => _expiredHour;
 
-  int get historyId => _historyId;
+  String get historyId => _historyId;
 
   TaskStatus get status => _status;
 }
@@ -77,28 +77,28 @@ class SaveEventDomainModel {
 }
 
 class DisableEventDomainModel {
-  int _eventId;
+  String _eventId;
 
   DisableEventDomainModel(this._eventId);
 
-  int get eventId => _eventId;
+  String get eventId => _eventId;
 }
 
 class DoneEventDomainModel {
-  int _eventId;
-  int _historyId;
+  String _eventId;
+  String _historyId;
 
   DoneEventDomainModel(this._eventId, this._historyId);
 
-  int get eventId => _eventId;
+  String get eventId => _eventId;
 
-  int get historyId => _historyId;
+  String get historyId => _historyId;
 
 
 }
 
 class EventHistoryDomainModel {
-  int _eventId;
+  String _eventId;
   String _eventName;
   int _doneTime;
   int _expiredHour;
@@ -122,7 +122,7 @@ class EventHistoryDomainModel {
 
   String get eventName => _eventName;
 
-  int get eventId => _eventId;
+  String get eventId => _eventId;
 
 }
 

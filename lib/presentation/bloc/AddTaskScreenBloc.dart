@@ -3,8 +3,10 @@ import 'package:flutter_app/domain/DomainModel.dart';
 import 'package:flutter_app/domain/Repository.dart';
 import 'package:flutter_app/presentation/model/PresentationModel.dart';
 
+import '../../main.dart';
+
 class AddTaskScreenBloc {
-  EventRepository _eventRepository = EventRepositoryImpl();
+  EventRepository _eventRepository = diResolver.resolve();
 
   Future<void> createTask(
       AddEventPresentationModel addEventPresentationModel) async {
