@@ -1,28 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_app/domain/DomainModel.dart';
-import 'package:flutter_app/presentation/bloc/MainScreenBloc.dart';
+import 'package:flutter_app/presentation/bloc/TaskScreenBloc.dart';
+import 'package:flutter_app/presentation/bloc/TodayTodosScreenBloc.dart';
 import 'package:flutter_app/presentation/model/PresentationModel.dart';
 import 'package:intl/intl.dart';
 
 import '../../main.dart';
 
-class MainScreen extends StatefulWidget {
+class TaskScreen extends StatefulWidget {
 
-  MainScreen({Key key}) : super(key: key);
+  TaskScreen({Key key}) : super(key: key);
 
   @override
-  MainScreenState createState() {
-    return MainScreenState("Tasks");
+  TaskScreenState createState() {
+    return TaskScreenState("Tasks");
   }
 }
 
-class MainScreenState extends State<MainScreen> {
+class TaskScreenState extends State<TaskScreen> {
   final String _title;
-  final MainScreenBloc _mainScreenBloc = diResolver.resolve();
+  final TaskScreenBloc _taskScreenBloc = diResolver.resolve();
   bool isLoading = true;
   var timeFormat = new NumberFormat("00", "en_US");
-  MainScreenState(this._title);
+  TaskScreenState(this._title);
 
   @override
   Widget build(BuildContext context) {
@@ -33,19 +34,7 @@ class MainScreenState extends State<MainScreen> {
           IconButton(
             icon: Icon(Icons.add),
             onPressed: () {
-              _onAddButtonClicked();
-            },
-          ),
-          IconButton(
-            icon: Icon(Icons.history),
-            onPressed: () {
-              _onHistoryClicked();
-            },
-          ),
-          IconButton(
-            icon: Icon(Icons.exit_to_app),
-            onPressed: () {
-              _onLogoutClicked();
+              _onAddTaskClicked();
             },
           ),
         ],
@@ -57,15 +46,15 @@ class MainScreenState extends State<MainScreen> {
   }
 
   Widget buildContentWidget(BuildContext context) {
-    return FutureBuilder<List<EventPresentationModel>>(
-      future: _mainScreenBloc.loadEventList(),
+    return FutureBuilder<List<TaskPresentationModel>>(
+      future: _taskScreenBloc.loadActiveTaskList(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return buildLoadingWidget();
         } else {
           if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot.hasData) {
-              List<EventPresentationModel> eventList = snapshot.data;
+              List<TaskPresentationModel> eventList = snapshot.data;
               if (eventList.isEmpty) {
                 return buildEmptyListWidget();
               } else {
@@ -94,7 +83,7 @@ class MainScreenState extends State<MainScreen> {
     return CircularProgressIndicator();
   }
 
-  RefreshIndicator buildListWidget(List<EventPresentationModel> eventList) {
+  RefreshIndicator buildListWidget(List<TaskPresentationModel> eventList) {
     return RefreshIndicator(
       onRefresh: _refreshData,
       child: ListView.separated(
@@ -113,7 +102,7 @@ class MainScreenState extends State<MainScreen> {
     return Center(
       child: InkWell(
         child: Text(
-          "You don't have any todo tasks, today!\nClick here to reload!",
+          "You don't have any tasks!\nClick here to reload!",
           textAlign: TextAlign.center,
         ),
         onTap: _refreshData,
@@ -122,7 +111,7 @@ class MainScreenState extends State<MainScreen> {
   }
 
   Widget buildListItem(
-      List<EventPresentationModel> eventList, BuildContext context, int index) {
+      List<TaskPresentationModel> eventList, BuildContext context, int index) {
     var event = eventList[index];
     return ListTile(
       leading: Icon(
@@ -139,71 +128,33 @@ class MainScreenState extends State<MainScreen> {
     );
   }
 
-  Widget buildStatusWidget(EventPresentationModel event) {
-    if (event.status == TaskStatus.TODO) {
-      return InkWell(
-        onTap: () {
-          _onDoneTaskClicked(event);
-        },
-        child: Padding(
-            padding: EdgeInsets.all(4),
-            child: Icon(
-              Icons.done,
-              color: Colors.green,
-              size: 32,
-            )),
-      );
-    } else {
-      return null;
-    }
-  }
-
-  void _onAddButtonClicked() {
-    Navigator.pushNamed(context, '/add_event');
-  }
-
-  void _onDoneTaskClicked(EventPresentationModel event) {
-    _showConfirmDoneTaskDialog(event);
-  }
-
-  void _showConfirmDoneTaskDialog(EventPresentationModel event) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: new Text("Done task?"),
-          content:
-              new Text("Task will done when you accept this action! Careful!"),
-          actions: <Widget>[
-            new FlatButton(
-              child: new Text("CLOSE"),
-              onPressed: () {
-                //nothing to do
-                Navigator.of(context).pop();
-              },
-            ),
-            new FlatButton(
-              child: new Text("DONE"),
-              onPressed: () async {
-                Navigator.of(context).pop();
-                await _mainScreenBloc.doneTask(event.eventId, event.historyId);
-                _refreshData();
-              },
-            ),
-          ],
-        );
+  Widget buildStatusWidget(TaskPresentationModel event) {
+    return InkWell(
+      onTap: () {
+        _onDisableTaskClicked(event);
       },
+      child: Padding(
+          padding: EdgeInsets.all(4),
+          child: Icon(
+            Icons.delete,
+            color: Colors.red.shade400,
+            size: 32,
+          )),
     );
   }
 
-  void _showConfirmLogoutDialog() {
+  void _onDisableTaskClicked(TaskPresentationModel event) {
+    _showConfirmDisableTaskDialog(event);
+  }
+
+  void _showConfirmDisableTaskDialog(TaskPresentationModel event) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: new Text("Logout?"),
+          title: new Text("Remove task?"),
           content:
-          new Text("Current user will logout when you accept this action! Careful!"),
+              new Text("Task will remove when you accept this action! Careful!"),
           actions: <Widget>[
             new FlatButton(
               child: new Text("CLOSE"),
@@ -213,11 +164,11 @@ class MainScreenState extends State<MainScreen> {
               },
             ),
             new FlatButton(
-              child: new Text("LOGOUT"),
+              child: new Text("REMOVE"),
               onPressed: () async {
-                await _mainScreenBloc.logout();
                 Navigator.of(context).pop();
-                _gotoSignInScreen();
+                await _taskScreenBloc.removeTask(event.taskId);
+                _refreshData();
               },
             ),
           ],
@@ -230,15 +181,7 @@ class MainScreenState extends State<MainScreen> {
     setState(() {});
   }
 
-  void _onHistoryClicked() {
-    Navigator.pushNamed(context, '/task_history');
-  }
-
-  void _onLogoutClicked() {
-    _showConfirmLogoutDialog();
-  }
-
-  void _gotoSignInScreen() {
-    Navigator.of(context).pushReplacementNamed('/signin');
+  void _onAddTaskClicked() {
+    Navigator.pushNamed(context, '/add_task');
   }
 }

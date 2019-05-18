@@ -1,6 +1,26 @@
 import 'package:flutter_app/domain/DomainModel.dart';
 
-class EventPresentationModel {
+class LoginUserPresentationModel {
+  String _uid;
+  String _userName;
+  String _email;
+  String _qrCodeContent;
+
+  LoginUserPresentationModel(this._uid, this._userName, this._email,
+      this._qrCodeContent);
+
+  String get qrCodeContent => _qrCodeContent;
+
+  String get email => _email;
+
+  String get userName => _userName;
+
+  String get uid => _uid;
+
+
+}
+
+class TodayTodoPresentationModel {
   String eventId;
   String historyId;
   String name;
@@ -8,7 +28,7 @@ class EventPresentationModel {
   int expiredMinute;
   TaskStatus status;
 
-  EventPresentationModel(this.eventId, this.historyId, this.name, this.expiredHour, this.expiredMinute, this.status);
+  TodayTodoPresentationModel(this.eventId, this.historyId, this.name, this.expiredHour, this.expiredMinute, this.status);
 }
 
 class AddEventPresentationModel {
@@ -42,4 +62,22 @@ class TaskHistoryPresentationModel {
       this.status);
 
 
+}
+
+class TaskPresentationModel {
+  String _taskId;
+  String _name;
+  int _expiredHour;
+  int _expiredMinute;
+
+  TaskPresentationModel(this._taskId, this._name, this._expiredHour,
+      this._expiredMinute);
+
+  String get name => _name;
+
+  String get taskId => _taskId;
+
+  int get expiredMinute => _expiredMinute;
+
+  int get expiredHour => _expiredHour;
 }

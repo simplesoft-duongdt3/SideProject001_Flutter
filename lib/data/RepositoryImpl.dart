@@ -34,6 +34,24 @@ class UserRepositoryImpl implements UserRepository {
     var isLogin = await _fireAuthController.isLogin();
     return isLogin;
   }
+
+  @override
+  Future<LoginUserDomainModel> getCurrentUser() async {
+    var mapLoginUser = await _fireAuthController.getLoginUser();
+    return _mapLoginUser(mapLoginUser);
+  }
+
+  LoginUserDomainModel _mapLoginUser(LoginUserFirebaseDataModel loginUser) {
+    LoginUserDomainModel result;
+    if (loginUser != null) {
+      result = LoginUserDomainModel(
+          loginUser.uid,
+          loginUser.userName,
+          loginUser.email
+      );
+    }
+    return result;
+  }
 }
 
 class EventRepositoryImpl implements EventRepository {
@@ -171,8 +189,8 @@ class EventRepositoryImpl implements EventRepository {
   }
 
   @override
-  Future<List<EventDomainModel>> getTodayEvents() async {
-    List<EventDomainModel> matchedEvents = [];
+  Future<List<TodayTodoDomainModel>> getTodayEvents() async {
+    List<TodayTodoDomainModel> matchedEvents = [];
     LoginUserFirebaseDataModel loginUser = await _fireAuthController.getLoginUser();
     if (loginUser != null) {
       var uid = loginUser.uid;
@@ -201,9 +219,9 @@ class EventRepositoryImpl implements EventRepository {
     return matchedEvents;
   }
 
-  EventDomainModel _mapEventDataToEventDomain(
+  TodayTodoDomainModel _mapEventDataToEventDomain(
       EventHistoryFirebaseDataModel historyModel) {
-    return EventDomainModel(
+    return TodayTodoDomainModel(
         historyModel.eventId,
         historyModel.id,
         historyModel.eventName,
@@ -410,8 +428,43 @@ class EventRepositoryImpl implements EventRepository {
   }
 
   @override
-  Future<void> logout() {
+  Future<List<TaskDomainModel>> getActiveTasks() async {
+    List<TaskDomainModel> tasks = [];
+    LoginUserFirebaseDataModel loginUser = await _fireAuthController.getLoginUser();
+    if (loginUser != null) {
+      var uid = loginUser.uid;
+      List<EventFirebaseDataModel> matchedTasks = [];
+      await _fireDatabaseController.reference().child("task/$uid").once().then((
+          DataSnapshot dataSnapshot) {
+        if (dataSnapshot.value != null) {
+          Map<dynamic, dynamic> values = dataSnapshot.value;
+          values.forEach((key, values) {
+            matchedTasks.add(EventFirebaseDataModel.from(key, values));
+          });
+        }
+      });
+      matchedTasks = matchedTasks
+          .where((event) => event.enable)
+          .toList(growable: false);
 
-    return null;
+      matchedTasks.sort((a, b) {
+        return a.expiredTime.compareTo(b.expiredTime);
+      });
+
+      tasks = matchedTasks
+          .map((task) => _mapTask(task))
+          .toList(growable: false);
+    }
+
+    return tasks;
+  }
+
+  TaskDomainModel _mapTask(EventFirebaseDataModel task) {
+    return TaskDomainModel(
+        task.id,
+        task.name,
+        task.expiredHour,
+        task.expiredMinute
+    );
   }
 }

@@ -4,20 +4,20 @@ import 'package:flutter_app/presentation/model/PresentationModel.dart';
 
 import '../../main.dart';
 
-class MainScreenBloc {
+class TodayTodosScreenBloc {
   UserRepository _userRepository = diResolver.resolve();
   EventRepository _eventRepository = diResolver.resolve();
 
-  Future<List<EventPresentationModel>> loadEventList() async {
+  Future<List<TodayTodoPresentationModel>> loadEventList() async {
     var todayEvents = await _eventRepository.getTodayEvents();
-    List<EventPresentationModel> result = _mapEventList(todayEvents);
+    List<TodayTodoPresentationModel> result = _mapEventList(todayEvents);
     return result;
   }
 
-  List<EventPresentationModel> _mapEventList(
-      List<EventDomainModel> todayEvents) {
+  List<TodayTodoPresentationModel> _mapEventList(
+      List<TodayTodoDomainModel> todayEvents) {
     return todayEvents
-        .map((event) => EventPresentationModel(
+        .map((event) => TodayTodoPresentationModel(
               event.eventId,
               event.historyId,
               event.name,

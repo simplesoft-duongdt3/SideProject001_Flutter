@@ -4,7 +4,9 @@ import 'package:kiwi/kiwi.dart' as kiwi;
 
 import 'bloc/AddTaskScreenBloc.dart';
 import 'bloc/HistoryScreenBloc.dart';
-import 'bloc/MainScreenBloc.dart';
+import 'bloc/TaskScreenBloc.dart';
+import 'bloc/TodayTodosScreenBloc.dart';
+import 'bloc/ShareQrScreenBloc.dart';
 import 'bloc/SignInScreenBloc.dart';
 
 class PresentationDependencyInjectRegister extends DependencyInjectRegister {
@@ -13,7 +15,9 @@ class PresentationDependencyInjectRegister extends DependencyInjectRegister {
     //data
     di.registerFactory((c) => AddTaskScreenBloc());
     di.registerFactory((c) => HistoryScreenBloc());
-    di.registerFactory((c) => MainScreenBloc());
+    di.registerFactory((c) => TodayTodosScreenBloc());
     di.registerFactory((c) => SignInScreenBloc());
+    di.registerFactory((c) => ShareQrScreenBloc());
+    di.registerFactory((c) => TaskScreenBloc());
   }
 }

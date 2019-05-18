@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/presentation/PresentationDependencyInjectRegister.dart';
 import 'package:flutter_app/presentation/screen/AddEventScreen.dart';
 import 'package:flutter_app/presentation/screen/HistoryScreen.dart';
-import 'package:flutter_app/presentation/screen/MainScreen.dart';
+import 'package:flutter_app/presentation/screen/TaskScreen.dart';
+import 'package:flutter_app/presentation/screen/TodayTodosScreen.dart';
+import 'package:flutter_app/presentation/screen/ShareQrScreen.dart';
 import 'package:flutter_app/presentation/screen/SignInScreen.dart';
 import 'package:flutter_app/presentation/screen/SignUpScreen.dart';
 import 'package:flutter_app/presentation/screen/SplashScreen.dart';
@@ -28,18 +30,20 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Event App',
+      title: 'Tiny Task',
       theme: ThemeData(
         primarySwatch: Colors.deepPurple,
       ),
       initialRoute: "/",
       routes: {
         "/": (context) => SplashScreen(),
-        "/main": (context) => MainScreen(),
-        "/add_event": (context) => AddEventScreen(),
+        "/today_todos": (context) => TodayTodosScreen(),
+        "/add_task": (context) => AddEventScreen(),
         "/task_history": (context) => HistoryScreen(),
         "/signup": (context) => SignUpScreen(),
         "/signin": (context) => SignInScreen(),
+        "/share_qr_code": (context) => ShareQrScreen(),
+        "/tasks": (context) => TaskScreen(),
       },
     );
   }

@@ -1,6 +1,49 @@
 import 'dart:core';
 
-class EventDomainModel {
+class LoginUserDomainModel {
+  String _uid;
+  String _userName;
+  String _email;
+
+  LoginUserDomainModel(this._uid, this._userName, this._email);
+
+  String get email => _email;
+
+  String get userName => _userName;
+
+  String get uid => _uid;
+
+  String getQrCodeContent() {
+    return "$_uid|$_userName|$_email";
+  }
+
+  LoginUserDomainModel.fromQrCodeContent(String qrCodeContent) {
+    var content = qrCodeContent.split("|");
+    _uid = content[0];
+    _userName = content[1];
+    _email = content[2];
+  }
+}
+
+class TaskDomainModel {
+  String _taskId;
+  String _name;
+  int _expiredHour;
+  int _expiredMinute;
+
+  TaskDomainModel(this._taskId, this._name, this._expiredHour,
+      this._expiredMinute);
+
+  String get name => _name;
+
+  String get taskId => _taskId;
+
+  int get expiredMinute => _expiredMinute;
+
+  int get expiredHour => _expiredHour;
+}
+
+class TodayTodoDomainModel {
   String _eventId;
   String _historyId;
   String _name;
@@ -8,9 +51,8 @@ class EventDomainModel {
   int _expiredMinute;
   TaskStatus _status;
 
-  EventDomainModel(
-      this._eventId, this._historyId, this._name, this._expiredHour, this._expiredMinute, this._status
-      );
+  TodayTodoDomainModel(this._eventId, this._historyId, this._name,
+      this._expiredHour, this._expiredMinute, this._status);
 
   String get name => _name;
 
@@ -25,11 +67,7 @@ class EventDomainModel {
   TaskStatus get status => _status;
 }
 
-enum TaskStatus {
-  TODO,
-  DONE,
-  DONE_LATE
-}
+enum TaskStatus { TODO, DONE, DONE_LATE }
 
 class SaveEventDomainModel {
   String _name;
@@ -93,8 +131,6 @@ class DoneEventDomainModel {
   String get eventId => _eventId;
 
   String get historyId => _historyId;
-
-
 }
 
 class EventHistoryDomainModel {
@@ -107,8 +143,7 @@ class EventHistoryDomainModel {
   TaskStatus _status;
 
   EventHistoryDomainModel(this._eventId, this._eventName, this._doneTime,
-      this._expiredHour, this._expiredMinute, this._createdTime,
-      this._status);
+      this._expiredHour, this._expiredMinute, this._createdTime, this._status);
 
   TaskStatus get status => _status;
 
@@ -123,16 +158,8 @@ class EventHistoryDomainModel {
   String get eventName => _eventName;
 
   String get eventId => _eventId;
-
 }
 
-class EventHistoryStatus {
+class EventHistoryStatus {}
 
-}
-
-enum ReportTimeEnum {
-  LAST_WEEK,
-  YESTERDAY,
-  TODAY
-}
-
+enum ReportTimeEnum { LAST_WEEK, YESTERDAY, TODAY }
