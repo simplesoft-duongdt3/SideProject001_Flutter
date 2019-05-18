@@ -59,12 +59,7 @@ class FireDatabaseController {
 class FireAppController {
   void init() async {
     await FirebaseApp.configure(
-      name: 'fluttertinytaskmanager',
-      options: const FirebaseOptions(
-        googleAppID: '1:77885632854:android:44d88283e6ec62b2',
-        apiKey: 'AIzaSyBJYetOiuGXyf1JyMfEIgOw4Kh5EH9Nq1g',
-        databaseURL: 'https://fluttertinytaskmanager.firebaseio.com/',
-      ),
+      //TODO firebase info
     );
   }
 }
