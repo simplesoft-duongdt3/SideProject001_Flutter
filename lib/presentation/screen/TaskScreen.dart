@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_app/domain/DomainModel.dart';
 import 'package:flutter_app/presentation/bloc/TaskScreenBloc.dart';
-import 'package:flutter_app/presentation/bloc/TodayTodosScreenBloc.dart';
 import 'package:flutter_app/presentation/model/PresentationModel.dart';
 import 'package:intl/intl.dart';
 
 import '../../main.dart';
 
 class TaskScreen extends StatefulWidget {
-
   TaskScreen({Key key}) : super(key: key);
 
   @override
@@ -153,8 +150,8 @@ class TaskScreenState extends State<TaskScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: new Text("Remove task?"),
-          content:
-              new Text("Task will remove when you accept this action! Careful!"),
+          content: new Text(
+              "Task will remove when you accept this action! Careful!"),
           actions: <Widget>[
             new FlatButton(
               child: new Text("CLOSE"),

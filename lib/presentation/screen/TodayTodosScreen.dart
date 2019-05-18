@@ -8,7 +8,6 @@ import 'package:intl/intl.dart';
 import '../../main.dart';
 
 class TodayTodosScreen extends StatefulWidget {
-
   TodayTodosScreen({Key key}) : super(key: key);
 
   @override
@@ -127,8 +126,8 @@ class TodayTodosScreenState extends State<TodayTodosScreen> {
     );
   }
 
-  Widget buildListItem(
-      List<TodayTodoPresentationModel> eventList, BuildContext context, int index) {
+  Widget buildListItem(List<TodayTodoPresentationModel> eventList,
+      BuildContext context, int index) {
     var event = eventList[index];
     return ListTile(
       leading: Icon(
@@ -208,8 +207,8 @@ class TodayTodosScreenState extends State<TodayTodosScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: new Text("Logout?"),
-          content:
-          new Text("Current user will logout when you accept this action! Careful!"),
+          content: new Text(
+              "Current user will logout when you accept this action! Careful!"),
           actions: <Widget>[
             new FlatButton(
               child: new Text("CLOSE"),

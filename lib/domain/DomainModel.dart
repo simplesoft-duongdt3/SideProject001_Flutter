@@ -31,8 +31,8 @@ class TaskDomainModel {
   int _expiredHour;
   int _expiredMinute;
 
-  TaskDomainModel(this._taskId, this._name, this._expiredHour,
-      this._expiredMinute);
+  TaskDomainModel(
+      this._taskId, this._name, this._expiredHour, this._expiredMinute);
 
   String get name => _name;
 

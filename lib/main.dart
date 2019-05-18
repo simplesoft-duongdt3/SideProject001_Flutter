@@ -19,8 +19,11 @@ void main() async {
 }
 
 void setupDi() async {
-  var diRegisters = [DataDependencyInjectRegister(), PresentationDependencyInjectRegister()];
-  for(var di in diRegisters) {
+  var diRegisters = [
+    DataDependencyInjectRegister(),
+    PresentationDependencyInjectRegister()
+  ];
+  for (var di in diRegisters) {
     await di.register(diResolver);
   }
 }

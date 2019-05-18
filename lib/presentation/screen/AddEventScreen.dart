@@ -28,7 +28,6 @@ class _AddEventScreenState extends State<AddEventScreen> {
 
   _AddEventScreenState(this._title) {
     _addEventPresentationModel = _createEmptyAddEventModel();
-
   }
 
   AddEventPresentationModel _createEmptyAddEventModel() {
@@ -181,14 +180,15 @@ class _AddEventScreenState extends State<AddEventScreen> {
     }
   }
 
-  void _showConfirmCreateTaskDialog(AddEventPresentationModel addEventPresentationModel) {
+  void _showConfirmCreateTaskDialog(
+      AddEventPresentationModel addEventPresentationModel) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: new Text("Create new task?"),
           content:
-          new Text("Task will be created when you accept this action!"),
+              new Text("Task will be created when you accept this action!"),
           actions: <Widget>[
             new FlatButton(
               child: new Text("CLOSE"),
@@ -250,8 +250,6 @@ class _AddEventScreenState extends State<AddEventScreen> {
     _addEventPresentationModel = _createEmptyAddEventModel();
     _textNameController.clear();
     _textTimeExpiredController.clear();
-    setState(() {
-
-    });
+    setState(() {});
   }
 }

@@ -46,7 +46,8 @@ class _GoogleSignInSectionState extends State<_GoogleSignInSection> {
             ),
             InkWell(
               onTap: () async {
-                bool isLoginSuccess = await _signInScreenBloc.signInWithGoogleAccount();
+                bool isLoginSuccess =
+                    await _signInScreenBloc.signInWithGoogleAccount();
                 if (isLoginSuccess) {
                   _goToHomeScreen();
                 }

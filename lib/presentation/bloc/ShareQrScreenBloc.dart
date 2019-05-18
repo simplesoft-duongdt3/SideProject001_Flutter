@@ -16,11 +16,7 @@ class ShareQrScreenBloc {
     LoginUserPresentationModel result;
     if (user != null) {
       result = LoginUserPresentationModel(
-          user.uid,
-          user.userName,
-          user.email,
-          user.getQrCodeContent()
-      );
+          user.uid, user.userName, user.email, user.getQrCodeContent());
     }
 
     return result;

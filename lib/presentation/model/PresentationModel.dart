@@ -6,8 +6,8 @@ class LoginUserPresentationModel {
   String _email;
   String _qrCodeContent;
 
-  LoginUserPresentationModel(this._uid, this._userName, this._email,
-      this._qrCodeContent);
+  LoginUserPresentationModel(
+      this._uid, this._userName, this._email, this._qrCodeContent);
 
   String get qrCodeContent => _qrCodeContent;
 
@@ -16,8 +16,6 @@ class LoginUserPresentationModel {
   String get userName => _userName;
 
   String get uid => _uid;
-
-
 }
 
 class TodayTodoPresentationModel {
@@ -28,7 +26,8 @@ class TodayTodoPresentationModel {
   int expiredMinute;
   TaskStatus status;
 
-  TodayTodoPresentationModel(this.eventId, this.historyId, this.name, this.expiredHour, this.expiredMinute, this.status);
+  TodayTodoPresentationModel(this.eventId, this.historyId, this.name,
+      this.expiredHour, this.expiredMinute, this.status);
 }
 
 class AddEventPresentationModel {
@@ -43,9 +42,17 @@ class AddEventPresentationModel {
   bool saturday;
   bool sunday;
 
-  AddEventPresentationModel(this.name, this.expiredHour,
-      this.expiredMinute, this.monday, this.tuesday, this.wednesday,
-      this.thursday, this.friday, this.saturday, this.sunday);
+  AddEventPresentationModel(
+      this.name,
+      this.expiredHour,
+      this.expiredMinute,
+      this.monday,
+      this.tuesday,
+      this.wednesday,
+      this.thursday,
+      this.friday,
+      this.saturday,
+      this.sunday);
 }
 
 class TaskHistoryPresentationModel {
@@ -58,10 +65,7 @@ class TaskHistoryPresentationModel {
   TaskStatus status;
 
   TaskHistoryPresentationModel(this.eventId, this.eventName, this.doneTime,
-      this.expiredHour, this.expiredMinute, this.createdTime,
-      this.status);
-
-
+      this.expiredHour, this.expiredMinute, this.createdTime, this.status);
 }
 
 class TaskPresentationModel {
@@ -70,8 +74,8 @@ class TaskPresentationModel {
   int _expiredHour;
   int _expiredMinute;
 
-  TaskPresentationModel(this._taskId, this._name, this._expiredHour,
-      this._expiredMinute);
+  TaskPresentationModel(
+      this._taskId, this._name, this._expiredHour, this._expiredMinute);
 
   String get name => _name;
 

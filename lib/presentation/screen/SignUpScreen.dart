@@ -61,8 +61,8 @@ class SignUpScreenState extends State<SignUpScreen> {
               child: Text(_success == null
                   ? ''
                   : (_success
-                  ? 'Successfully registered ' + _userEmail
-                  : 'Registration failed')),
+                      ? 'Successfully registered ' + _userEmail
+                      : 'Registration failed')),
             )
           ],
         ),

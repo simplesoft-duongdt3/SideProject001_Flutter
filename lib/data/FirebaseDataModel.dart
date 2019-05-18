@@ -58,7 +58,7 @@ class EventFirebaseDataModel {
       this.saturday,
       this.sunday);
 
-    EventFirebaseDataModel.from(dynamic key, dynamic values)
+  EventFirebaseDataModel.from(dynamic key, dynamic values)
       : id = key,
         name = values["name"],
         expiredHour = values["expiredHour"],

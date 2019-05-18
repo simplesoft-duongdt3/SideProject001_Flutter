@@ -13,8 +13,7 @@ class TaskScreenBloc {
     return result;
   }
 
-  List<TaskPresentationModel> _mapEventList(
-      List<TaskDomainModel> todayEvents) {
+  List<TaskPresentationModel> _mapEventList(List<TaskDomainModel> todayEvents) {
     return todayEvents
         .map((event) => TaskPresentationModel(
               event.taskId,

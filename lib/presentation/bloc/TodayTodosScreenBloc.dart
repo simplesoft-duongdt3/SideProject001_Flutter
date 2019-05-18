@@ -18,13 +18,12 @@ class TodayTodosScreenBloc {
       List<TodayTodoDomainModel> todayEvents) {
     return todayEvents
         .map((event) => TodayTodoPresentationModel(
-              event.eventId,
-              event.historyId,
-              event.name,
-              event.expiredHour,
-              event.expiredMinute,
-              event.status
-            ))
+            event.eventId,
+            event.historyId,
+            event.name,
+            event.expiredHour,
+            event.expiredMinute,
+            event.status))
         .toList(growable: false);
   }
 

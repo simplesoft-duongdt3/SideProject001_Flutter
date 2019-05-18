@@ -24,7 +24,9 @@ class DataDependencyInjectRegister extends DependencyInjectRegister {
     });
     di.registerSingleton((c) => FireAuthController());
     di.registerFactory((c) => GoogleSignIn());
-    di.registerSingleton<EventRepository, EventRepositoryImpl>((c) => EventRepositoryImpl());
-    di.registerSingleton<UserRepository, UserRepositoryImpl>((c) => UserRepositoryImpl());
+    di.registerSingleton<EventRepository, EventRepositoryImpl>(
+        (c) => EventRepositoryImpl());
+    di.registerSingleton<UserRepository, UserRepositoryImpl>(
+        (c) => UserRepositoryImpl());
   }
 }

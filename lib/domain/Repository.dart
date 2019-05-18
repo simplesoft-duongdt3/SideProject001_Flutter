@@ -6,7 +6,8 @@ abstract class EventRepository {
   Future<void> doneEvent(DoneEventDomainModel doneEventDomainModel);
   Future<List<TodayTodoDomainModel>> getTodayEvents();
   Future<List<TaskDomainModel>> getActiveTasks();
-  Future<List<EventHistoryDomainModel>> getEventHistoryReport(ReportTimeEnum reportTimeEnum);
+  Future<List<EventHistoryDomainModel>> getEventHistoryReport(
+      ReportTimeEnum reportTimeEnum);
 }
 
 abstract class UserRepository {

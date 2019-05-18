@@ -7,7 +7,6 @@ import 'package:intl/intl.dart';
 
 import '../../main.dart';
 
-
 class HistoryScreen extends StatefulWidget {
   HistoryScreen({Key key}) : super(key: key);
 
@@ -22,7 +21,11 @@ class HistoryScreenState extends State<HistoryScreen> {
   final HistoryScreenBloc _mainScreenBloc = diResolver.resolve();
   var timeFormat = new NumberFormat("00", "en_US");
 
-  final List<ReportTimeEnum> _reportTabs = [ReportTimeEnum.LAST_WEEK, ReportTimeEnum.YESTERDAY, ReportTimeEnum.TODAY];
+  final List<ReportTimeEnum> _reportTabs = [
+    ReportTimeEnum.LAST_WEEK,
+    ReportTimeEnum.YESTERDAY,
+    ReportTimeEnum.TODAY
+  ];
   //default today tab
   final int _initTabPos = 2;
 
@@ -48,14 +51,11 @@ class HistoryScreenState extends State<HistoryScreen> {
   }
 
   List<Widget> _buildTabs() {
-    return <Widget>[
-      for(var report in _reportTabs) _createTabReport(report)
-    ];
+    return <Widget>[for (var report in _reportTabs) _createTabReport(report)];
   }
 
   Widget _createTabReport(ReportTimeEnum report) {
-    switch(report) {
-
+    switch (report) {
       case ReportTimeEnum.TODAY:
         return Tab(text: "Today");
         break;
@@ -109,7 +109,8 @@ class HistoryScreenState extends State<HistoryScreen> {
     return CircularProgressIndicator();
   }
 
-  RefreshIndicator buildListWidget(List<TaskHistoryPresentationModel> eventList) {
+  RefreshIndicator buildListWidget(
+      List<TaskHistoryPresentationModel> eventList) {
     return RefreshIndicator(
       onRefresh: _refreshData,
       child: ListView.separated(
@@ -136,8 +137,8 @@ class HistoryScreenState extends State<HistoryScreen> {
     );
   }
 
-  Widget buildListItem(
-      List<TaskHistoryPresentationModel> eventList, BuildContext context, int index) {
+  Widget buildListItem(List<TaskHistoryPresentationModel> eventList,
+      BuildContext context, int index) {
     TaskHistoryPresentationModel history = eventList[index];
     return ListTile(
       leading: Icon(
@@ -148,7 +149,7 @@ class HistoryScreenState extends State<HistoryScreen> {
         history.eventName,
       ),
       subtitle: Text(
-          '${timeFormat.format(history.expiredHour)}:${timeFormat.format(history.expiredMinute)}',
+        '${timeFormat.format(history.expiredHour)}:${timeFormat.format(history.expiredMinute)}',
       ),
       trailing: Text(
         _mapTextFromStatus(history.status),
@@ -156,13 +157,12 @@ class HistoryScreenState extends State<HistoryScreen> {
     );
   }
 
-
   Future<void> _refreshData() async {
     setState(() {});
   }
 
   String _mapTextFromStatus(TaskStatus status) {
-    switch(status) {
+    switch (status) {
       case TaskStatus.TODO:
         return "To do";
         break;
@@ -178,7 +178,7 @@ class HistoryScreenState extends State<HistoryScreen> {
 
   List<Widget> _createTabViews(BuildContext context) {
     return [
-      for(var report in _reportTabs) _buildContentWidget(context, report)
+      for (var report in _reportTabs) _buildContentWidget(context, report)
     ];
   }
 }

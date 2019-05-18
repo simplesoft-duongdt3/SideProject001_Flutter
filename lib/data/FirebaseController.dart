@@ -57,10 +57,8 @@ class FireDatabaseController {
 }
 
 class FireAppController {
-  FirebaseApp _app;
-
   void init() async {
-    _app = await FirebaseApp.configure(
+    await FirebaseApp.configure(
       name: 'fluttertinytaskmanager',
       options: const FirebaseOptions(
         googleAppID: '1:77885632854:android:44d88283e6ec62b2',

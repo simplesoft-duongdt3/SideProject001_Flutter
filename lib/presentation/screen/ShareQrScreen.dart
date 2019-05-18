@@ -56,12 +56,8 @@ class _ShareQrSectionState extends State<_ShareQrSection> {
                             data: user.qrCodeContent,
                             size: 200.0,
                           ),
-                          Text(
-                            user.userName
-                          ),
-                          Text(
-                              user.email
-                          ),
+                          Text(user.userName),
+                          Text(user.email),
                         ],
                       );
                     } else {
@@ -75,13 +71,8 @@ class _ShareQrSectionState extends State<_ShareQrSection> {
                   }
                 }
               }
-            }
-        ),
+            }),
       ),
     );
-  }
-
-  void _goToHomeScreen() {
-    Navigator.of(context).pushReplacementNamed('/main');
   }
 }
