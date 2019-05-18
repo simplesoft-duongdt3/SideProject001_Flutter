@@ -11,9 +11,11 @@ class DataDependencyInjectRegister extends DependencyInjectRegister {
   @override
   Future<void> register(kiwi.Container di) async {
     //data
-    final FireAppController fireAppController = FireAppController();
-    fireAppController.init();
-    di.registerSingleton((c) => fireAppController);
+    di.registerSingleton((c) async {
+      final FireAppController fireAppController = FireAppController();
+      await fireAppController.init();
+      return fireAppController;
+    });
     di.registerSingleton((c) => FireDatabaseController());
     di.registerSingleton((c) => FirebaseAuth.instance);
     di.registerSingleton((c) {

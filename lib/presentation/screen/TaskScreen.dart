@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_app/presentation/bloc/TaskScreenBloc.dart';
 import 'package:flutter_app/presentation/model/PresentationModel.dart';
+import 'package:flutter_app/presentation/route/RouteProvider.dart';
 import 'package:intl/intl.dart';
 
 import '../../main.dart';
@@ -18,6 +19,7 @@ class TaskScreen extends StatefulWidget {
 class TaskScreenState extends State<TaskScreen> {
   final String _title;
   final TaskScreenBloc _taskScreenBloc = diResolver.resolve();
+  final RouterProvider _routerProvider = diResolver.resolve();
   bool isLoading = true;
   var timeFormat = new NumberFormat("00", "en_US");
   TaskScreenState(this._title);
@@ -111,6 +113,7 @@ class TaskScreenState extends State<TaskScreen> {
       List<TaskPresentationModel> eventList, BuildContext context, int index) {
     var event = eventList[index];
     return ListTile(
+      onTap: () => _goToTaskDetail(context, event),
       leading: Icon(
         Icons.event_note,
         color: Theme.of(context).primaryColor,
@@ -123,6 +126,10 @@ class TaskScreenState extends State<TaskScreen> {
       ),
       trailing: buildStatusWidget(event),
     );
+  }
+
+  Future _goToTaskDetail(BuildContext context, TaskPresentationModel event) {
+    return Navigator.of(context).push(_routerProvider.getTaskDetailScreen(event.taskId));
   }
 
   Widget buildStatusWidget(TaskPresentationModel event) {
@@ -179,6 +186,6 @@ class TaskScreenState extends State<TaskScreen> {
   }
 
   void _onAddTaskClicked() {
-    Navigator.pushNamed(context, '/add_task');
+    Navigator.push(context, _routerProvider.getAddTaskScreen());
   }
 }

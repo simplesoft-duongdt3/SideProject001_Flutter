@@ -8,6 +8,7 @@ abstract class EventRepository {
   Future<List<TaskDomainModel>> getActiveTasks();
   Future<List<EventHistoryDomainModel>> getEventHistoryReport(
       ReportTimeEnum reportTimeEnum);
+  Future<TaskDetailDomainModel> getTaskDetail(String taskId);
 }
 
 abstract class UserRepository {

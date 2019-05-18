@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_app/domain/DomainModel.dart';
 import 'package:flutter_app/presentation/bloc/TodayTodosScreenBloc.dart';
 import 'package:flutter_app/presentation/model/PresentationModel.dart';
+import 'package:flutter_app/presentation/route/RouteProvider.dart';
 import 'package:intl/intl.dart';
 
 import '../../main.dart';
@@ -19,8 +20,10 @@ class TodayTodosScreen extends StatefulWidget {
 class TodayTodosScreenState extends State<TodayTodosScreen> {
   final String _title;
   final TodayTodosScreenBloc _mainScreenBloc = diResolver.resolve();
+  final RouterProvider _routerProvider = diResolver.resolve();
   bool isLoading = true;
   var timeFormat = new NumberFormat("00", "en_US");
+
   TodayTodosScreenState(this._title);
 
   @override
@@ -130,6 +133,9 @@ class TodayTodosScreenState extends State<TodayTodosScreen> {
       BuildContext context, int index) {
     var event = eventList[index];
     return ListTile(
+      onTap: () {
+        _goToTaskDetail(context, event.eventId);
+      },
       leading: Icon(
         Icons.event_note,
         color: Theme.of(context).primaryColor,
@@ -164,7 +170,7 @@ class TodayTodosScreenState extends State<TodayTodosScreen> {
   }
 
   void _onTasksClicked() {
-    Navigator.pushNamed(context, '/tasks');
+    Navigator.push(context, _routerProvider.getTaskScreen());
   }
 
   void _onDoneTaskClicked(TodayTodoPresentationModel event) {
@@ -236,7 +242,7 @@ class TodayTodosScreenState extends State<TodayTodosScreen> {
   }
 
   void _onHistoryClicked() {
-    Navigator.pushNamed(context, '/task_history');
+    Navigator.of(context).push(_routerProvider.getHistoryScreen());
   }
 
   void _onLogoutClicked() {
@@ -244,10 +250,15 @@ class TodayTodosScreenState extends State<TodayTodosScreen> {
   }
 
   void _gotoSignInScreen() {
-    Navigator.of(context).pushReplacementNamed('/signin');
+    Navigator.of(context).pushReplacement(_routerProvider.getSignInScreen());
   }
 
   void _onShareClicked() {
-    Navigator.of(context).pushNamed('/share_qr_code');
+    Navigator.of(context).push(_routerProvider.getShareQrScreen());
+  }
+
+  Future _goToTaskDetail(BuildContext context, String taskId) {
+    return Navigator.of(context)
+        .push(_routerProvider.getTaskDetailScreen(taskId));
   }
 }

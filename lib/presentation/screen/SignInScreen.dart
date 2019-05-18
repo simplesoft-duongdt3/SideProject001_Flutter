@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/presentation/bloc/SignInScreenBloc.dart';
+import 'package:flutter_app/presentation/route/RouteProvider.dart';
 
 import '../../main.dart';
 
@@ -31,6 +32,7 @@ class _GoogleSignInSection extends StatefulWidget {
 
 class _GoogleSignInSectionState extends State<_GoogleSignInSection> {
   SignInScreenBloc _signInScreenBloc = diResolver.resolve();
+  final RouterProvider _routerProvider = diResolver.resolve();
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -49,7 +51,7 @@ class _GoogleSignInSectionState extends State<_GoogleSignInSection> {
                 bool isLoginSuccess =
                     await _signInScreenBloc.signInWithGoogleAccount();
                 if (isLoginSuccess) {
-                  _goToHomeScreen();
+                  _goToTodayTodosScreen();
                 }
               },
               child: const Image(
@@ -64,7 +66,7 @@ class _GoogleSignInSectionState extends State<_GoogleSignInSection> {
     );
   }
 
-  void _goToHomeScreen() {
-    Navigator.of(context).pushReplacementNamed('/main');
+  void _goToTodayTodosScreen() {
+    Navigator.of(context).pushReplacement(_routerProvider.getTodayTodosScreen());
   }
 }

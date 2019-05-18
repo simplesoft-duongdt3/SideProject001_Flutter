@@ -114,6 +114,51 @@ class SaveEventDomainModel {
   String get name => _name;
 }
 
+class TaskDetailDomainModel {
+  String _name;
+  int _expiredHour;
+  int _expiredMinute;
+  bool _monday;
+  bool _tuesday;
+  bool _wednesday;
+  bool _thursday;
+  bool _friday;
+  bool _saturday;
+  bool _sunday;
+
+  TaskDetailDomainModel(
+      this._name,
+      this._expiredHour,
+      this._expiredMinute,
+      this._monday,
+      this._tuesday,
+      this._wednesday,
+      this._thursday,
+      this._friday,
+      this._saturday,
+      this._sunday);
+
+  bool get sunday => _sunday;
+
+  bool get saturday => _saturday;
+
+  bool get friday => _friday;
+
+  bool get thursday => _thursday;
+
+  bool get wednesday => _wednesday;
+
+  bool get tuesday => _tuesday;
+
+  bool get monday => _monday;
+
+  int get expiredMinute => _expiredMinute;
+
+  int get expiredHour => _expiredHour;
+
+  String get name => _name;
+}
+
 class DisableEventDomainModel {
   String _eventId;
 

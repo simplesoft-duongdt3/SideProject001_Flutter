@@ -8,16 +8,16 @@ import 'package:intl/intl.dart';
 
 import '../../main.dart';
 
-class AddEventScreen extends StatefulWidget {
-  AddEventScreen({Key key}) : super(key: key);
+class AddTaskScreen extends StatefulWidget {
+  AddTaskScreen({Key key}) : super(key: key);
 
   @override
-  _AddEventScreenState createState() {
-    return _AddEventScreenState("Add tasks");
+  _AddTaskScreenState createState() {
+    return _AddTaskScreenState("Add tasks");
   }
 }
 
-class _AddEventScreenState extends State<AddEventScreen> {
+class _AddTaskScreenState extends State<AddTaskScreen> {
   final String _title;
   final AddTaskScreenBloc addTaskScreenBloc = diResolver.resolve();
   final GlobalKey<FormState> _addFormKey = GlobalKey<FormState>();
@@ -26,7 +26,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
   final _textTimeExpiredController = TextEditingController(text: "");
   AddEventPresentationModel _addEventPresentationModel;
 
-  _AddEventScreenState(this._title) {
+  _AddTaskScreenState(this._title) {
     _addEventPresentationModel = _createEmptyAddEventModel();
   }
 

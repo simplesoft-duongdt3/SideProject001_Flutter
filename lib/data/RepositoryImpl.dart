@@ -176,21 +176,19 @@ class EventRepositoryImpl implements EventRepository {
       List<int> dateValues = _getReportDateValues(reportTimeEnum);
       List<EventHistoryFirebaseDataModel> foundHistories = [];
       for (var findDate in dateValues) {
-        await _fireDatabaseController
+        DataSnapshot dataSnapshot = await _fireDatabaseController
             .reference()
             .child("task_history/$uid")
             .orderByChild("date")
             .equalTo(findDate)
-            .once()
-            .then((DataSnapshot dataSnapshot) {
-          if (dataSnapshot.value != null) {
-            Map<dynamic, dynamic> values = dataSnapshot.value;
-            values.forEach((key, values) {
-              foundHistories
-                  .add(EventHistoryFirebaseDataModel.from(key, values));
-            });
-          }
-        });
+            .once();
+        if (dataSnapshot.value != null) {
+          Map<dynamic, dynamic> values = dataSnapshot.value;
+          values.forEach((key, values) {
+            foundHistories
+                .add(EventHistoryFirebaseDataModel.from(key, values));
+          });
+        }
       }
 
       foundHistories.sort((a, b) {
@@ -219,20 +217,19 @@ class EventRepositoryImpl implements EventRepository {
 
       var dateValueToday = _getDateValueToday();
       List<EventHistoryFirebaseDataModel> foundHistories = [];
-      await _fireDatabaseController
+      DataSnapshot dataSnapshot = await _fireDatabaseController
           .reference()
           .child("task_history/$uid")
           .orderByChild("date")
           .equalTo(dateValueToday)
-          .once()
-          .then((DataSnapshot dataSnapshot) {
-        if (dataSnapshot.value != null) {
-          Map<dynamic, dynamic> values = dataSnapshot.value;
-          values.forEach((key, values) {
-            foundHistories.add(EventHistoryFirebaseDataModel.from(key, values));
-          });
-        }
-      });
+          .once();
+
+      if (dataSnapshot.value != null) {
+        Map<dynamic, dynamic> values = dataSnapshot.value;
+        values.forEach((key, values) {
+          foundHistories.add(EventHistoryFirebaseDataModel.from(key, values));
+        });
+      }
 
       foundHistories = foundHistories
           .where((history) =>
@@ -312,23 +309,14 @@ class EventRepositoryImpl implements EventRepository {
     return false;
   }
 
+  Future<List<EventFirebaseDataModel>> _getTodayActiveTasks(String uid) async {
+    List<EventFirebaseDataModel> matchedTasks = await _getActiveTasks(uid);
+    return matchedTasks.where((task) => _checkWeekdayInToday(task)).toList(growable: false);
+  }
+
   Future<void> _createTodayHistoryEventsIfNeed(String uid) async {
-    List<EventFirebaseDataModel> matchedTasks = [];
-    await _fireDatabaseController
-        .reference()
-        .child("task/$uid")
-        .once()
-        .then((DataSnapshot dataSnapshot) {
-      if (dataSnapshot.value != null) {
-        Map<dynamic, dynamic> values = dataSnapshot.value;
-        values.forEach((key, values) {
-          matchedTasks.add(EventFirebaseDataModel.from(key, values));
-        });
-      }
-    });
-    matchedTasks = matchedTasks
-        .where((event) => event.enable && _checkWeekdayInToday(event))
-        .toList(growable: true);
+    List<EventFirebaseDataModel> matchedTasks = await _getTodayActiveTasks(uid);
+
     int dateValue = _getDateValueToday();
 
     var listOfTaskId = [for (var task in matchedTasks) task.id];
@@ -348,6 +336,24 @@ class EventRepositoryImpl implements EventRepository {
         _createHistory(task, dateValue, uid);
       }
     }
+  }
+
+  Future<List<EventFirebaseDataModel>> _getActiveTasks(String uid) async {
+    List<EventFirebaseDataModel> matchedTasks = [];
+    DataSnapshot dataSnapshot = await _fireDatabaseController
+        .reference()
+        .child("task/$uid")
+        .once();
+    if (dataSnapshot.value != null) {
+      Map<dynamic, dynamic> values = dataSnapshot.value;
+      values.forEach((key, values) {
+        matchedTasks.add(EventFirebaseDataModel.from(key, values));
+      });
+    }
+    matchedTasks = matchedTasks
+        .where((event) => event.enable)
+        .toList(growable: true);
+    return matchedTasks;
   }
 
   Future<void> _createHistory(
@@ -392,20 +398,20 @@ class EventRepositoryImpl implements EventRepository {
   Future<List<EventHistoryFirebaseDataModel>> _findTodayHistoryModels(
       List<String> listOfTaskId, int dateValue, String uid) async {
     List<EventHistoryFirebaseDataModel> foundHistories = [];
-    await _fireDatabaseController
+    DataSnapshot dataSnapshot = await _fireDatabaseController
         .reference()
         .child("task_history/$uid")
         .orderByChild("date")
         .equalTo(dateValue)
-        .once()
-        .then((DataSnapshot dataSnapshot) {
-      if (dataSnapshot.value != null) {
-        Map<dynamic, dynamic> values = dataSnapshot.value;
-        values.forEach((key, values) {
-          foundHistories.add(EventHistoryFirebaseDataModel.from(key, values));
-        });
-      }
-    });
+        .once();
+
+    if (dataSnapshot.value != null) {
+      Map<dynamic, dynamic> values = dataSnapshot.value;
+      values.forEach((key, values) {
+        foundHistories.add(EventHistoryFirebaseDataModel.from(key, values));
+      });
+    }
+
     foundHistories = foundHistories
         .where((history) =>
             history.date == dateValue && listOfTaskId.contains(history.eventId))
@@ -474,21 +480,7 @@ class EventRepositoryImpl implements EventRepository {
         await _fireAuthController.getLoginUser();
     if (loginUser != null) {
       var uid = loginUser.uid;
-      List<EventFirebaseDataModel> matchedTasks = [];
-      await _fireDatabaseController
-          .reference()
-          .child("task/$uid")
-          .once()
-          .then((DataSnapshot dataSnapshot) {
-        if (dataSnapshot.value != null) {
-          Map<dynamic, dynamic> values = dataSnapshot.value;
-          values.forEach((key, values) {
-            matchedTasks.add(EventFirebaseDataModel.from(key, values));
-          });
-        }
-      });
-      matchedTasks =
-          matchedTasks.where((event) => event.enable).toList(growable: false);
+      List<EventFirebaseDataModel> matchedTasks = await _getActiveTasks(uid);
 
       matchedTasks.sort((a, b) {
         return a.expiredTime.compareTo(b.expiredTime);
@@ -504,5 +496,42 @@ class EventRepositoryImpl implements EventRepository {
   TaskDomainModel _mapTask(EventFirebaseDataModel task) {
     return TaskDomainModel(
         task.id, task.name, task.expiredHour, task.expiredMinute);
+  }
+
+  @override
+  Future<TaskDetailDomainModel> getTaskDetail(String taskId) async {
+    TaskDetailDomainModel taskDetailDomainModel;
+    LoginUserFirebaseDataModel loginUser =
+        await _fireAuthController.getLoginUser();
+    if (loginUser != null) {
+      var uid = loginUser.uid;
+      List<EventFirebaseDataModel> matchedTasks = [];
+      DataSnapshot dataSnapshot = await _fireDatabaseController
+          .reference()
+          .child("task/$uid/$taskId")
+          .once();
+      var eventFirebaseDataModel = EventFirebaseDataModel.from(dataSnapshot.key, dataSnapshot.value);
+      taskDetailDomainModel = _mapDetailTask(eventFirebaseDataModel);
+    }
+    return taskDetailDomainModel;
+  }
+
+  TaskDetailDomainModel _mapDetailTask(EventFirebaseDataModel eventFirebaseDataModel) {
+    TaskDetailDomainModel taskDetailDomainModel;
+    if (eventFirebaseDataModel != null) {
+      taskDetailDomainModel = TaskDetailDomainModel(
+          eventFirebaseDataModel.name,
+          eventFirebaseDataModel.expiredHour,
+          eventFirebaseDataModel.expiredMinute,
+          eventFirebaseDataModel.monday,
+          eventFirebaseDataModel.tuesday,
+          eventFirebaseDataModel.wednesday,
+          eventFirebaseDataModel.thursday,
+          eventFirebaseDataModel.friday,
+          eventFirebaseDataModel.saturday,
+          eventFirebaseDataModel.sunday,
+      );
+    }
+    return taskDetailDomainModel;
   }
 }

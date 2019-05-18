@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/presentation/PresentationDependencyInjectRegister.dart';
-import 'package:flutter_app/presentation/screen/AddEventScreen.dart';
+import 'package:flutter_app/presentation/screen/AddTaskScreen.dart';
 import 'package:flutter_app/presentation/screen/HistoryScreen.dart';
 import 'package:flutter_app/presentation/screen/TaskScreen.dart';
 import 'package:flutter_app/presentation/screen/TodayTodosScreen.dart';
@@ -14,14 +14,14 @@ import 'data/DataDependencyInjectRegister.dart';
 
 final kiwi.Container diResolver = kiwi.Container();
 void main() async {
-  setupDi();
+  await setupDi();
   runApp(MyApp());
 }
 
-void setupDi() async {
+Future<void> setupDi() async {
   var diRegisters = [
     DataDependencyInjectRegister(),
-    PresentationDependencyInjectRegister()
+    PresentationDependencyInjectRegister(),
   ];
   for (var di in diRegisters) {
     await di.register(diResolver);
@@ -37,17 +37,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.deepPurple,
       ),
-      initialRoute: "/",
-      routes: {
-        "/": (context) => SplashScreen(),
-        "/today_todos": (context) => TodayTodosScreen(),
-        "/add_task": (context) => AddEventScreen(),
-        "/task_history": (context) => HistoryScreen(),
-        "/signup": (context) => SignUpScreen(),
-        "/signin": (context) => SignInScreen(),
-        "/share_qr_code": (context) => ShareQrScreen(),
-        "/tasks": (context) => TaskScreen(),
-      },
+      home: SplashScreen(),
     );
   }
 }
