@@ -387,10 +387,9 @@ class EventRepositoryImpl implements EventRepository {
   }
 
   int _getDateValue(DateTime dateSelect) {
-    var utcDateTime = dateSelect.toUtc();
-    var year = utcDateTime.year;
-    var month = utcDateTime.month;
-    var date = utcDateTime.day;
+    var year = dateSelect.year;
+    var month = dateSelect.month;
+    var date = dateSelect.day;
     int dateValue = (year * 10000) + (month * 100) + date;
     return dateValue;
   }
