@@ -51,9 +51,42 @@ class FireAuthController {
 class FireDatabaseController {
   final FirebaseDatabase _firebaseDatabase = diResolver.resolve();
 
-  DatabaseReference reference() {
-    return _firebaseDatabase.reference();
+  DatabaseReference getUserRef(String uid) {
+    return _firebaseDatabase.reference().child("user/$uid");
   }
+
+  DatabaseReference getDailyTaskRef(String uid) {
+    return _firebaseDatabase.reference().child("task/$uid");
+  }
+
+  DatabaseReference getDailyTaskWithIdRef(String uid, String taskId) {
+    return _firebaseDatabase.reference().child("task/$uid/$taskId");
+  }
+
+  DatabaseReference getDailyTaskHistoryRef(String uid) {
+    return _firebaseDatabase.reference().child("task_history/$uid");
+  }
+
+  DatabaseReference getDailyTaskHistoryWithIdRef(String uid, String historyId) {
+    return _firebaseDatabase.reference().child("task_history/$uid/$historyId");
+  }
+
+  DatabaseReference getOneTimeTaskRef(String uid) {
+    return _firebaseDatabase.reference().child("one_time_task/$uid");
+  }
+
+  DatabaseReference getOneTimeTaskWithIdRef(String uid, String oneTimeTaskId) {
+    return _firebaseDatabase.reference().child("one_time_task/$uid/$oneTimeTaskId");
+  }
+
+  DatabaseReference getOneTimeTaskHistoryRef(String uid) {
+    return _firebaseDatabase.reference().child("one_time_task_history/$uid");
+  }
+
+  DatabaseReference getOneTimeTaskHistoryWithIdRef(String uid, String historyId) {
+    return _firebaseDatabase.reference().child("one_time_task_history/$uid/$historyId");
+  }
+
 }
 
 class FireAppController {

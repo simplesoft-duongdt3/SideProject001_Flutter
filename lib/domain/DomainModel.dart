@@ -50,9 +50,17 @@ class TodayTodoDomainModel {
   int _expiredHour;
   int _expiredMinute;
   TaskStatus _status;
+  TaskType _type;
 
-  TodayTodoDomainModel(this._eventId, this._historyId, this._name,
-      this._expiredHour, this._expiredMinute, this._status);
+  TodayTodoDomainModel(
+    this._eventId,
+    this._historyId,
+    this._name,
+    this._expiredHour,
+    this._expiredMinute,
+    this._status,
+    this._type,
+  );
 
   String get name => _name;
 
@@ -65,11 +73,21 @@ class TodayTodoDomainModel {
   String get historyId => _historyId;
 
   TaskStatus get status => _status;
+
+  TaskType get type => _type;
 }
 
-enum TaskStatus { TODO, DONE, DONE_LATE }
+enum TaskType {
+  DAILY,
+  ONE_TIME,
+}
+enum TaskStatus {
+  TODO,
+  DONE,
+  DONE_LATE,
+}
 
-class SaveEventDomainModel {
+class SaveDailyTaskDomainModel {
   String _name;
   int _expiredHour;
   int _expiredMinute;
@@ -81,7 +99,7 @@ class SaveEventDomainModel {
   bool _saturday;
   bool _sunday;
 
-  SaveEventDomainModel(
+  SaveDailyTaskDomainModel(
       this._name,
       this._expiredHour,
       this._expiredMinute,
@@ -106,6 +124,36 @@ class SaveEventDomainModel {
   bool get tuesday => _tuesday;
 
   bool get monday => _monday;
+
+  int get expiredMinute => _expiredMinute;
+
+  int get expiredHour => _expiredHour;
+
+  String get name => _name;
+}
+
+class SaveOneTimeTaskDomainModel {
+  String _name;
+  int _expiredHour;
+  int _expiredMinute;
+  int _expiredDay;
+  int _expiredMonth;
+  int _expiredYear;
+
+  SaveOneTimeTaskDomainModel(
+    this._name,
+    this._expiredHour,
+    this._expiredMinute,
+    this._expiredDay,
+    this._expiredMonth,
+    this._expiredYear,
+  );
+
+  int get expiredYear => _expiredYear;
+
+  int get expiredMonth => _expiredMonth;
+
+  int get expiredDay => _expiredDay;
 
   int get expiredMinute => _expiredMinute;
 
@@ -127,16 +175,17 @@ class TaskDetailDomainModel {
   bool _sunday;
 
   TaskDetailDomainModel(
-      this._name,
-      this._expiredHour,
-      this._expiredMinute,
-      this._monday,
-      this._tuesday,
-      this._wednesday,
-      this._thursday,
-      this._friday,
-      this._saturday,
-      this._sunday);
+    this._name,
+    this._expiredHour,
+    this._expiredMinute,
+    this._monday,
+    this._tuesday,
+    this._wednesday,
+    this._thursday,
+    this._friday,
+    this._saturday,
+    this._sunday,
+  );
 
   bool get sunday => _sunday;
 
@@ -159,26 +208,34 @@ class TaskDetailDomainModel {
   String get name => _name;
 }
 
-class DisableEventDomainModel {
+class DisableDailyTaskDomainModel {
   String _eventId;
 
-  DisableEventDomainModel(this._eventId);
+  DisableDailyTaskDomainModel(this._eventId);
 
   String get eventId => _eventId;
 }
 
-class DoneEventDomainModel {
+class DisableOneTimeTaskDomainModel {
+  String _oneTimeEventId;
+
+  DisableOneTimeTaskDomainModel(this._oneTimeEventId);
+
+  String get oneTimeEventId => _oneTimeEventId;
+}
+
+class DoneDailyTaskDomainModel {
   String _eventId;
   String _historyId;
 
-  DoneEventDomainModel(this._eventId, this._historyId);
+  DoneDailyTaskDomainModel(this._eventId, this._historyId);
 
   String get eventId => _eventId;
 
   String get historyId => _historyId;
 }
 
-class EventHistoryDomainModel {
+class TaskHistoryDomainModel {
   String _eventId;
   String _eventName;
   int _doneTime;
@@ -187,7 +244,7 @@ class EventHistoryDomainModel {
   int _createdTime;
   TaskStatus _status;
 
-  EventHistoryDomainModel(this._eventId, this._eventName, this._doneTime,
+  TaskHistoryDomainModel(this._eventId, this._eventName, this._doneTime,
       this._expiredHour, this._expiredMinute, this._createdTime, this._status);
 
   TaskStatus get status => _status;

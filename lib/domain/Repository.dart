@@ -1,14 +1,17 @@
 import 'DomainModel.dart';
 
 abstract class EventRepository {
-  Future<void> createEvent(SaveEventDomainModel saveEventDataModel);
-  Future<void> disableEvent(DisableEventDomainModel disableEventDataModel);
-  Future<void> doneEvent(DoneEventDomainModel doneEventDomainModel);
-  Future<List<TodayTodoDomainModel>> getTodayEvents();
-  Future<List<TaskDomainModel>> getActiveTasks();
-  Future<List<EventHistoryDomainModel>> getEventHistoryReport(
+  Future<void> createDailyTask(SaveDailyTaskDomainModel saveEventDataModel);
+  Future<void> createOneTimeTask(SaveOneTimeTaskDomainModel saveEventDataModel);
+  Future<void> disableDailyEvent(DisableDailyTaskDomainModel disableEventDataModel);
+  Future<void> disableOneTimeEvent(DisableOneTimeTaskDomainModel disableEventDataModel);
+  Future<void> doneEvent(DoneDailyTaskDomainModel doneEventDomainModel);
+  Future<List<TodayTodoDomainModel>> getTodayTodos();
+  Future<List<TaskDomainModel>> getActiveDailyTasks();
+  Future<List<TaskDomainModel>> getActiveOneTimeTasks();
+  Future<List<TaskHistoryDomainModel>> getTaskHistoryReport(
       ReportTimeEnum reportTimeEnum);
-  Future<TaskDetailDomainModel> getTaskDetail(String taskId);
+  Future<TaskDetailDomainModel> getTaskDailyDetail(String taskId);
 }
 
 abstract class UserRepository {

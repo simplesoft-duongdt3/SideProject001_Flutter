@@ -43,9 +43,7 @@ class HistoryScreenState extends State<HistoryScreen> {
             tabs: _buildTabs(),
           ),
         ),
-        body: TabBarView(
-          children: _createTabViews(context),
-        ),
+        body: _createTabViews(context),
       ),
     );
   }
@@ -176,9 +174,11 @@ class HistoryScreenState extends State<HistoryScreen> {
     return "Unknown";
   }
 
-  List<Widget> _createTabViews(BuildContext context) {
-    return [
-      for (var report in _reportTabs) _buildContentWidget(context, report)
-    ];
+  Widget _createTabViews(BuildContext context) {
+    return TabBarView(
+      children: [
+        for (var report in _reportTabs) _buildContentWidget(context, report)
+      ],
+    ) ;
   }
 }

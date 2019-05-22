@@ -21,7 +21,7 @@ class LoginUserFirebaseDataModel {
   }
 }
 
-class EventFirebaseDataModel {
+class DailyTaskFirebaseDataModel {
   String id;
   String name;
   int expiredHour;
@@ -40,7 +40,7 @@ class EventFirebaseDataModel {
   bool saturday;
   bool sunday;
 
-  EventFirebaseDataModel(
+  DailyTaskFirebaseDataModel(
       this.name,
       this.expiredHour,
       this.expiredMinute,
@@ -58,7 +58,7 @@ class EventFirebaseDataModel {
       this.saturday,
       this.sunday);
 
-  EventFirebaseDataModel.from(dynamic key, dynamic values)
+  DailyTaskFirebaseDataModel.from(dynamic key, dynamic values)
       : id = key,
         name = values["name"],
         expiredHour = values["expiredHour"],
@@ -99,7 +99,7 @@ class EventFirebaseDataModel {
   }
 }
 
-class EventHistoryFirebaseDataModel {
+class DailyTaskHistoryFirebaseDataModel {
   String id;
   String eventId;
   String eventName;
@@ -111,7 +111,7 @@ class EventHistoryFirebaseDataModel {
   int date;
   int status;
 
-  EventHistoryFirebaseDataModel(
+  DailyTaskHistoryFirebaseDataModel(
       this.eventId,
       this.eventName,
       this.doneTime,
@@ -122,7 +122,7 @@ class EventHistoryFirebaseDataModel {
       this.date,
       this.status);
 
-  EventHistoryFirebaseDataModel.from(dynamic key, dynamic values)
+  DailyTaskHistoryFirebaseDataModel.from(dynamic key, dynamic values)
       : id = key,
         eventId = values["eventId"],
         eventName = values["eventName"],
@@ -147,7 +147,147 @@ class EventHistoryFirebaseDataModel {
       "status": status,
     };
   }
+}
 
+class OneTimeTaskFirebaseDataModel {
+  String id;
+  String name;
+  int expiredHour;
+  int expiredMinute;
+  int expiredTime;
+  int expiredDay;
+  int expiredMonth;
+  int expiredYear;
+  int expiredDate;
+  bool enable;
+  int enableTimeStart;
+  int enableTimeEnd;
+  int createdTime;
+  int updateTime;
+
+  OneTimeTaskFirebaseDataModel(
+    this.name,
+    this.expiredHour,
+    this.expiredMinute,
+    this.expiredTime,
+    this.expiredDay,
+    this.expiredMonth,
+    this.expiredYear,
+    this.expiredDate,
+    this.enable,
+    this.enableTimeStart,
+    this.enableTimeEnd,
+    this.createdTime,
+    this.updateTime,
+  );
+
+  OneTimeTaskFirebaseDataModel.from(dynamic key, dynamic values)
+      : id = key,
+        name = values["name"],
+        expiredHour = values["expiredHour"],
+        expiredMinute = values["expiredMinute"],
+        expiredTime = values["expiredTime"],
+        enable = values["enable"],
+        enableTimeStart = values["enableTimeStart"],
+        enableTimeEnd = values["enableTimeEnd"],
+        createdTime = values["createdTime"],
+        updateTime = values["updateTime"],
+        expiredDay = values["expiredDay"],
+        expiredMonth = values["expiredMonth"],
+        expiredYear = values["expiredYear"],
+        expiredDate = values["expiredDate"];
+
+  toJson() {
+    return {
+      "name": name,
+      "expiredHour": expiredHour,
+      "expiredMinute": expiredMinute,
+      "expiredTime": expiredTime,
+      "enable": enable,
+      "enableTimeStart": enableTimeStart,
+      "enableTimeEnd": enableTimeEnd,
+      "createdTime": createdTime,
+      "updateTime": updateTime,
+      "expiredDay": expiredDay,
+      "expiredMonth": expiredMonth,
+      "expiredYear": expiredYear,
+      "expiredDate": expiredDate,
+    };
+  }
+}
+
+class OneTimeTaskHistoryFirebaseDataModel {
+  String id;
+  String oneTimeTaskId;
+  String oneTimeTaskName;
+  int doneTime;
+  int expiredHour;
+  int expiredMinute;
+  int expiredTime;
+  int expiredDay;
+  int expiredMonth;
+  int expiredYear;
+  int expiredDate;
+  int createdTime;
+  int date;
+  int status;
+  bool enable;
+
+  OneTimeTaskHistoryFirebaseDataModel(
+    this.oneTimeTaskId,
+    this.oneTimeTaskName,
+    this.doneTime,
+    this.expiredHour,
+    this.expiredMinute,
+    this.expiredTime,
+    this.expiredDay,
+    this.expiredMonth,
+    this.expiredYear,
+    this.expiredDate,
+    this.createdTime,
+    this.date,
+    this.status,
+    this.enable,
+  );
+
+  OneTimeTaskHistoryFirebaseDataModel.from(dynamic key, dynamic values)
+      : id = key,
+        oneTimeTaskId = values["oneTimeTaskId"],
+        oneTimeTaskName = values["oneTimeTaskName"],
+        doneTime = values["doneTime"],
+        expiredHour = values["expiredHour"],
+        expiredMinute = values["expiredMinute"],
+        expiredTime = values["expiredTime"],
+        createdTime = values["createdTime"],
+        date = values["date"],
+        status = values["status"],
+        expiredDay = values["expiredDay"],
+        expiredMonth = values["expiredMonth"],
+        expiredYear = values["expiredYear"],
+        expiredDate = values["expiredDate"],
+        enable = values["enable"];
+
+  toJson() {
+    return {
+      "oneTimeTaskId": oneTimeTaskId,
+      "oneTimeTaskName": oneTimeTaskName,
+      "doneTime": doneTime,
+      "expiredHour": expiredHour,
+      "expiredMinute": expiredMinute,
+      "expiredTime": expiredTime,
+      "createdTime": createdTime,
+      "date": date,
+      "status": status,
+      "expiredDay": expiredDay,
+      "expiredMonth": expiredMonth,
+      "expiredYear": expiredYear,
+      "expiredDate": expiredDate,
+      "enable": enable,
+    };
+  }
+}
+
+class TaskStatusDataConstant {
   static const int STATUS_TODO = 0;
   static const int STATUS_DONE = 1;
   static const int STATUS_DONE_LATE = 2;

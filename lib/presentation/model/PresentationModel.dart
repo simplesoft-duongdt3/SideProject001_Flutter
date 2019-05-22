@@ -25,12 +25,20 @@ class TodayTodoPresentationModel {
   int expiredHour;
   int expiredMinute;
   TaskStatus status;
+  TaskType type;
 
-  TodayTodoPresentationModel(this.eventId, this.historyId, this.name,
-      this.expiredHour, this.expiredMinute, this.status);
+  TodayTodoPresentationModel(
+    this.eventId,
+    this.historyId,
+    this.name,
+    this.expiredHour,
+    this.expiredMinute,
+    this.status,
+    this.type,
+  );
 }
 
-class AddEventPresentationModel {
+class AddDailyTaskPresentationModel {
   String name;
   int expiredHour;
   int expiredMinute;
@@ -42,17 +50,55 @@ class AddEventPresentationModel {
   bool saturday;
   bool sunday;
 
-  AddEventPresentationModel(
-      this.name,
-      this.expiredHour,
-      this.expiredMinute,
-      this.monday,
-      this.tuesday,
-      this.wednesday,
-      this.thursday,
-      this.friday,
-      this.saturday,
-      this.sunday);
+  bool get isDaily =>
+      monday &&
+      tuesday &&
+      wednesday &&
+      thursday &&
+      friday &&
+      saturday &&
+      sunday;
+
+  void applyAllDayOfWeek(bool isAllDayOfWeek) {
+    this.monday = isAllDayOfWeek;
+    this.tuesday = isAllDayOfWeek;
+    this.wednesday = isAllDayOfWeek;
+    this.thursday = isAllDayOfWeek;
+    this.friday = isAllDayOfWeek;
+    this.saturday = isAllDayOfWeek;
+    this.sunday = isAllDayOfWeek;
+  }
+
+  AddDailyTaskPresentationModel(
+    this.name,
+    this.expiredHour,
+    this.expiredMinute,
+    this.monday,
+    this.tuesday,
+    this.wednesday,
+    this.thursday,
+    this.friday,
+    this.saturday,
+    this.sunday,
+  );
+}
+
+class AddOneTimeTaskPresentationModel {
+  String name;
+  int expiredHour;
+  int expiredMinute;
+  int expiredDay;
+  int expiredMonth;
+  int expiredYear;
+
+  AddOneTimeTaskPresentationModel(
+    this.name,
+    this.expiredHour,
+    this.expiredMinute,
+    this.expiredDay,
+    this.expiredMonth,
+    this.expiredYear,
+  );
 }
 
 class TaskDetailPresentationModel {

@@ -9,7 +9,7 @@ class TodayTodosScreenBloc {
   EventRepository _eventRepository = diResolver.resolve();
 
   Future<List<TodayTodoPresentationModel>> loadEventList() async {
-    var todayEvents = await _eventRepository.getTodayEvents();
+    var todayEvents = await _eventRepository.getTodayTodos();
     List<TodayTodoPresentationModel> result = _mapEventList(todayEvents);
     return result;
   }
@@ -18,17 +18,20 @@ class TodayTodosScreenBloc {
       List<TodayTodoDomainModel> todayEvents) {
     return todayEvents
         .map((event) => TodayTodoPresentationModel(
-            event.eventId,
-            event.historyId,
-            event.name,
-            event.expiredHour,
-            event.expiredMinute,
-            event.status))
+              event.eventId,
+              event.historyId,
+              event.name,
+              event.expiredHour,
+              event.expiredMinute,
+              event.status,
+              event.type,
+            ))
         .toList(growable: false);
   }
 
   Future<void> doneTask(String eventId, String historyId) async {
-    await _eventRepository.doneEvent(DoneEventDomainModel(eventId, historyId));
+    await _eventRepository
+        .doneEvent(DoneDailyTaskDomainModel(eventId, historyId));
   }
 
   Future<void> logout() async {

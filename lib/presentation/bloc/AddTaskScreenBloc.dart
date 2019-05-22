@@ -7,23 +7,43 @@ import '../../main.dart';
 class AddTaskScreenBloc {
   EventRepository _eventRepository = diResolver.resolve();
 
-  Future<void> createTask(
-      AddEventPresentationModel addEventPresentationModel) async {
-    await _eventRepository.createEvent(_mapEvent(addEventPresentationModel));
+  Future<void> createDailyTask(
+      AddDailyTaskPresentationModel addTaskPresentationModel) async {
+    await _eventRepository
+        .createDailyTask(_mapDailyTask(addTaskPresentationModel));
   }
 
-  SaveEventDomainModel _mapEvent(
-      AddEventPresentationModel addEventPresentationModel) {
-    return SaveEventDomainModel(
-        addEventPresentationModel.name,
-        addEventPresentationModel.expiredHour,
-        addEventPresentationModel.expiredMinute,
-        addEventPresentationModel.monday,
-        addEventPresentationModel.tuesday,
-        addEventPresentationModel.wednesday,
-        addEventPresentationModel.thursday,
-        addEventPresentationModel.friday,
-        addEventPresentationModel.saturday,
-        addEventPresentationModel.sunday);
+  Future<void> createOneTimeTask(
+      AddOneTimeTaskPresentationModel addTaskPresentationModel) async {
+    await _eventRepository
+        .createOneTimeTask(_mapOneTimeTask(addTaskPresentationModel));
+  }
+
+  SaveDailyTaskDomainModel _mapDailyTask(
+      AddDailyTaskPresentationModel addEventPresentationModel) {
+    return SaveDailyTaskDomainModel(
+      addEventPresentationModel.name,
+      addEventPresentationModel.expiredHour,
+      addEventPresentationModel.expiredMinute,
+      addEventPresentationModel.monday,
+      addEventPresentationModel.tuesday,
+      addEventPresentationModel.wednesday,
+      addEventPresentationModel.thursday,
+      addEventPresentationModel.friday,
+      addEventPresentationModel.saturday,
+      addEventPresentationModel.sunday,
+    );
+  }
+
+  SaveOneTimeTaskDomainModel _mapOneTimeTask(
+      AddOneTimeTaskPresentationModel addTaskPresentationModel) {
+    return SaveOneTimeTaskDomainModel(
+      addTaskPresentationModel.name,
+      addTaskPresentationModel.expiredHour,
+      addTaskPresentationModel.expiredMinute,
+      addTaskPresentationModel.expiredDay,
+      addTaskPresentationModel.expiredMonth,
+      addTaskPresentationModel.expiredYear,
+    );
   }
 }

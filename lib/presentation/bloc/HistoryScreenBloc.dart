@@ -9,13 +9,13 @@ class HistoryScreenBloc {
 
   Future<List<TaskHistoryPresentationModel>> loadHistoryList(
       ReportTimeEnum reportTime) async {
-    var todayEvents = await _eventRepository.getEventHistoryReport(reportTime);
+    var todayEvents = await _eventRepository.getTaskHistoryReport(reportTime);
     List<TaskHistoryPresentationModel> result = _mapEventList(todayEvents);
     return result;
   }
 
   List<TaskHistoryPresentationModel> _mapEventList(
-      List<EventHistoryDomainModel> todayEvents) {
+      List<TaskHistoryDomainModel> todayEvents) {
     return todayEvents
         .map((history) => TaskHistoryPresentationModel(
               history.eventId,

@@ -8,7 +8,7 @@ class TaskDetailScreenBloc {
   EventRepository _eventRepository = diResolver.resolve();
 
   Future<TaskDetailPresentationModel> getTaskDetail(String taskId) async {
-    var taskDetail = await _eventRepository.getTaskDetail(taskId);
+    var taskDetail = await _eventRepository.getTaskDailyDetail(taskId);
     return _mapTaskDetail(taskDetail);
   }
 

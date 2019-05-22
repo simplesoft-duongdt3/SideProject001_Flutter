@@ -8,7 +8,7 @@ class TaskScreenBloc {
   EventRepository _eventRepository = diResolver.resolve();
 
   Future<List<TaskPresentationModel>> loadActiveTaskList() async {
-    var todayEvents = await _eventRepository.getActiveTasks();
+    var todayEvents = await _eventRepository.getActiveDailyTasks();
     List<TaskPresentationModel> result = _mapEventList(todayEvents);
     return result;
   }
@@ -25,6 +25,6 @@ class TaskScreenBloc {
   }
 
   Future<void> removeTask(String eventId) async {
-    await _eventRepository.disableEvent(DisableEventDomainModel(eventId));
+    await _eventRepository.disableDailyEvent(DisableDailyTaskDomainModel(eventId));
   }
 }
