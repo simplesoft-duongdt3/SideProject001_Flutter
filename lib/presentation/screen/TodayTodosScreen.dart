@@ -4,6 +4,7 @@ import 'package:flutter_app/domain/DomainModel.dart';
 import 'package:flutter_app/presentation/bloc/TodayTodosScreenBloc.dart';
 import 'package:flutter_app/presentation/model/PresentationModel.dart';
 import 'package:flutter_app/presentation/route/RouteProvider.dart';
+import 'package:flutter_app/presentation/screen/add_task/AddTaskScreen.dart';
 import 'package:intl/intl.dart';
 
 import '../../main.dart';
@@ -61,6 +62,13 @@ class TodayTodosScreenState extends State<TodayTodosScreen> {
       body: Center(
         child: buildContentWidget(context),
       ),
+      floatingActionButton: FloatingActionButton.extended(
+        heroTag: "dailyHeroTag",
+        onPressed: () => _addTaskClicked(),
+        tooltip: "Add task",
+        icon: Icon(Icons.add),
+        label: Text("Add task"),
+      ),
     );
   }
 
@@ -109,7 +117,7 @@ class TodayTodosScreenState extends State<TodayTodosScreen> {
         itemBuilder: (context, index) =>
             buildListItem(eventList, context, index),
         scrollDirection: Axis.vertical,
-        itemCount: eventList.length,
+        itemCount: eventList.length + 1,
         separatorBuilder: (context, index) => Divider(
               color: Colors.grey,
             ),
@@ -131,23 +139,32 @@ class TodayTodosScreenState extends State<TodayTodosScreen> {
 
   Widget buildListItem(List<TodayTodoPresentationModel> eventList,
       BuildContext context, int index) {
-    var event = eventList[index];
-    return ListTile(
-      onTap: () {
-        _goToTaskDetail(context, event.eventId, event.type);
-      },
-      leading: Icon(
-        Icons.event_note,
-        color: Theme.of(context).primaryColor,
-      ),
-      title: Text(
-        event.name,
-      ),
-      subtitle: Text(
-        '${timeFormat.format(event.expiredHour)}:${timeFormat.format(event.expiredMinute)}',
-      ),
-      trailing: buildStatusWidget(event),
-    );
+    if (index >= 0 && index < eventList.length) {
+      var event = eventList[index];
+      return ListTile(
+        onTap: () {
+          _goToTaskDetail(context, event.eventId, event.type);
+        },
+        leading: Icon(
+          Icons.event_note,
+          color: Theme
+              .of(context)
+              .primaryColor,
+        ),
+        title: Text(
+          event.name,
+        ),
+        subtitle: Text(
+          '${timeFormat.format(event.expiredHour)}:${timeFormat.format(
+              event.expiredMinute)}',
+        ),
+        trailing: buildStatusWidget(event),
+      );
+    } else {
+      return Container(
+        height: 80,
+      );
+    }
   }
 
   Widget buildStatusWidget(TodayTodoPresentationModel event) {
@@ -197,7 +214,16 @@ class TodayTodosScreenState extends State<TodayTodosScreen> {
               child: new Text("DONE"),
               onPressed: () async {
                 Navigator.of(context).pop();
-                await _mainScreenBloc.doneTask(event.eventId, event.historyId);
+                switch (event.type) {
+                  case TaskType.DAILY:
+                    await _mainScreenBloc.doneDailyTask(
+                        event.eventId, event.historyId);
+                    break;
+                  case TaskType.ONE_TIME:
+                    await _mainScreenBloc.doneOneTimeTask(
+                        event.eventId, event.historyId);
+                    break;
+                }
                 _refreshData();
               },
             ),
@@ -268,6 +294,10 @@ class TodayTodosScreenState extends State<TodayTodosScreen> {
             .push(_routerProvider.getOneTimeTaskDetailScreen(taskId));
         break;
     }
+  }
 
+  void _addTaskClicked() {
+    Navigator.of(context).push(
+        _routerProvider.getAddTaskScreen(AddTaskScreenTabSelect.DAILY));
   }
 }

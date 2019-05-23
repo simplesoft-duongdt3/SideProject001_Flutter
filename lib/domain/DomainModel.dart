@@ -290,6 +290,17 @@ class DoneDailyTaskDomainModel {
   String get historyId => _historyId;
 }
 
+class DoneOneTimeTaskDomainModel {
+  String _eventId;
+  String _historyId;
+
+  DoneOneTimeTaskDomainModel(this._eventId, this._historyId);
+
+  String get eventId => _eventId;
+
+  String get historyId => _historyId;
+}
+
 class TaskHistoryDomainModel {
   String _eventId;
   String _eventName;

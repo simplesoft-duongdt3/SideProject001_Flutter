@@ -132,7 +132,8 @@ class EventRepositoryImpl implements EventRepository {
   }
 
   @override
-  Future<void> doneEvent(DoneDailyTaskDomainModel doneEventDomainModel) async {
+  Future<void> doneDailyTask(
+      DoneDailyTaskDomainModel doneEventDomainModel) async {
     LoginUserFirebaseDataModel loginUser = await _getLoginUser();
     if (loginUser != null) {
       var uid = loginUser.uid;
@@ -145,7 +146,7 @@ class EventRepositoryImpl implements EventRepository {
             historyData.key, historyData.value);
         var nowMilliseconds = _getNowMilliseconds();
         var doneTime = nowMilliseconds;
-        var status = _getDoneStatus(findHistory);
+        var status = _getDailyTaskDoneStatus(findHistory);
         var updateTime = nowMilliseconds;
         await _fireDatabaseController
             .getDailyTaskHistoryWithIdRef(uid, historyId)
@@ -158,10 +159,10 @@ class EventRepositoryImpl implements EventRepository {
     }
   }
 
-  int _getDoneStatus(DailyTaskHistoryFirebaseDataModel findHistory) {
+  int _getDailyTaskDoneStatus(DailyTaskHistoryFirebaseDataModel findHistory) {
     int status = TaskStatusDataConstant.STATUS_DONE;
     var now = DateTime.now();
-    var currentTime = (now.hour * 100) + now.minute;
+    var currentTime = Util.calcTaskTimeExpired(now.hour, now.minute);
     var taskExpiredTime = findHistory.expiredTime;
     if (currentTime > taskExpiredTime) {
       status = TaskStatusDataConstant.STATUS_DONE_LATE;
@@ -874,5 +875,46 @@ class EventRepositoryImpl implements EventRepository {
       }
     }
     return taskDetailDomainModel;
+  }
+
+  @override
+  Future<void> doneOneTimeTask(
+      DoneOneTimeTaskDomainModel doneOneTimeTaskDomainModel) async {
+    LoginUserFirebaseDataModel loginUser = await _getLoginUser();
+    if (loginUser != null) {
+      var uid = loginUser.uid;
+      var historyId = doneOneTimeTaskDomainModel.historyId;
+      DataSnapshot historyData = await _fireDatabaseController
+          .getOneTimeTaskHistoryWithIdRef(uid, historyId)
+          .once();
+      if (historyData.value != null) {
+        var findHistory = OneTimeTaskHistoryFirebaseDataModel.from(
+            historyData.key, historyData.value);
+        var nowMilliseconds = _getNowMilliseconds();
+        var doneTime = nowMilliseconds;
+        var status = _getOneTimeTaskDoneStatus(findHistory);
+        var updateTime = nowMilliseconds;
+        await _fireDatabaseController
+            .getOneTimeTaskHistoryWithIdRef(uid, historyId)
+            .update({
+          "updateTime": updateTime,
+          "doneTime": doneTime,
+          "status": status,
+        });
+      }
+    }
+  }
+
+  int _getOneTimeTaskDoneStatus(
+      OneTimeTaskHistoryFirebaseDataModel findHistory) {
+    int status = TaskStatusDataConstant.STATUS_DONE;
+    var now = DateTime.now();
+    var currentTime = Util.calcTaskTimeExpired(now.hour, now.minute);
+    var taskExpiredTime = findHistory.expiredTime;
+    if (currentTime > taskExpiredTime) {
+      status = TaskStatusDataConstant.STATUS_DONE_LATE;
+    }
+
+    return status;
   }
 }

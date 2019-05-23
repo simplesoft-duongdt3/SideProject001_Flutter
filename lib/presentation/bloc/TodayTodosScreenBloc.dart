@@ -29,9 +29,14 @@ class TodayTodosScreenBloc {
         .toList(growable: false);
   }
 
-  Future<void> doneTask(String eventId, String historyId) async {
+  Future<void> doneDailyTask(String eventId, String historyId) async {
     await _eventRepository
-        .doneEvent(DoneDailyTaskDomainModel(eventId, historyId));
+        .doneDailyTask(DoneDailyTaskDomainModel(eventId, historyId));
+  }
+
+  Future<void> doneOneTimeTask(String eventId, String historyId) async {
+    await _eventRepository
+        .doneOneTimeTask(DoneOneTimeTaskDomainModel(eventId, historyId));
   }
 
   Future<void> logout() async {
