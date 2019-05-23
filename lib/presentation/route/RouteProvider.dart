@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/presentation/screen/AddTaskScreen.dart';
 import 'package:flutter_app/presentation/screen/HistoryScreen.dart';
-import 'package:flutter_app/presentation/screen/OneTimeTaskDetailScreen.dart';
 import 'package:flutter_app/presentation/screen/ShareQrScreen.dart';
 import 'package:flutter_app/presentation/screen/SignInScreen.dart';
 import 'package:flutter_app/presentation/screen/SignUpScreen.dart';
 import 'package:flutter_app/presentation/screen/SplashScreen.dart';
-import 'package:flutter_app/presentation/screen/DailyTaskDetailScreen.dart';
-import 'package:flutter_app/presentation/screen/TaskScreen.dart';
 import 'package:flutter_app/presentation/screen/TodayTodosScreen.dart';
+import 'package:flutter_app/presentation/screen/add_task/AddTaskScreen.dart';
+import 'package:flutter_app/presentation/screen/task/TaskScreen.dart';
+import 'package:flutter_app/presentation/screen/task_detail/DailyTaskDetailScreen.dart';
+import 'package:flutter_app/presentation/screen/task_detail/OneTimeTaskDetailScreen.dart';
 
 class RouterProvider {
   MaterialPageRoute getSplashScreen() {

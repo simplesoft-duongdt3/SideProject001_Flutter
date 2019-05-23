@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_app/main.dart';
 import 'package:flutter_app/presentation/route/RouteProvider.dart';
+import 'package:flutter_app/presentation/screen/add_task/AddTaskScreen.dart';
+import 'package:flutter_app/presentation/screen/task/DailyTaskScreen.dart';
+import 'package:flutter_app/presentation/screen/task/OneTimeTaskScreen.dart';
 import 'package:intl/intl.dart';
-
-import '../../main.dart';
-import 'AddTaskScreen.dart';
-import 'DailyTaskScreen.dart';
-import 'OneTimeTaskScreen.dart';
 
 class TaskScreen extends StatefulWidget {
   TaskScreen({Key key}) : super(key: key);

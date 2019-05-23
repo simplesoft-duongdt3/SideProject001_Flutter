@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_app/main.dart';
 import 'package:flutter_app/presentation/bloc/AddTaskScreenBloc.dart';
-
-import '../../main.dart';
-import 'AddDailyTaskScreen.dart';
-import 'AddOneTimeTaskScreen.dart';
+import 'package:flutter_app/presentation/screen/add_task/AddDailyTaskScreen.dart';
+import 'package:flutter_app/presentation/screen/add_task/AddOneTimeTaskScreen.dart';
 
 class AddTaskScreen extends StatefulWidget {
   final AddTaskScreenTabSelect _selectedTab;
+
   AddTaskScreen(this._selectedTab, {Key key}) : super(key: key);
 
   @override
@@ -16,10 +16,7 @@ class AddTaskScreen extends StatefulWidget {
   }
 }
 
-enum AddTaskScreenTabSelect {
-  DAILY,
-  ONE_TIME
-}
+enum AddTaskScreenTabSelect { DAILY, ONE_TIME }
 
 class _AddTaskScreenState extends State<AddTaskScreen> {
   final AddTaskScreenTabSelect _selectedTab;
@@ -67,7 +64,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
 
   int getInitTabIndex() {
     if (_selectedTab == AddTaskScreenTabSelect.DAILY) {
-        return 0;
+      return 0;
     } else {
       return 1;
     }

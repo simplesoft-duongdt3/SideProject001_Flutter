@@ -2,11 +2,10 @@ import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_app/main.dart';
 import 'package:flutter_app/presentation/bloc/AddTaskScreenBloc.dart';
 import 'package:flutter_app/presentation/model/PresentationModel.dart';
 import 'package:intl/intl.dart';
-
-import '../../main.dart';
 
 class AddDailyTaskScreen extends StatefulWidget {
   AddDailyTaskScreen({Key key}) : super(key: key);
@@ -215,7 +214,8 @@ class _AddDailyTaskScreenState extends State<AddDailyTaskScreen> {
               child: new Text("CREATE"),
               onPressed: () async {
                 Navigator.of(context).pop();
-                await addTaskScreenBloc.createDailyTask(addEventPresentationModel);
+                await addTaskScreenBloc
+                    .createDailyTask(addEventPresentationModel);
                 _refreshData();
                 _showUserWarning("Create task successful!");
               },

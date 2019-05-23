@@ -1,36 +1,32 @@
-import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_app/presentation/bloc/AddTaskScreenBloc.dart';
+import 'package:flutter_app/main.dart';
 import 'package:flutter_app/presentation/bloc/TaskDetailScreenBloc.dart';
 import 'package:flutter_app/presentation/model/PresentationModel.dart';
 import 'package:intl/intl.dart';
 
-import '../../main.dart';
-
 class DailyTaskDetailScreen extends StatelessWidget {
   final String _taskId;
+
   DailyTaskDetailScreen(this._taskId, {Key key}) : super(key: key);
   final TaskDetailScreenBloc taskDetailScreenBloc = diResolver.resolve();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Daily task detail"),
-        //hide back button
-        //automaticallyImplyLeading: false,
-      ),
-      body: Center(
-        child: FutureBuilder(
-          future: taskDetailScreenBloc.getDailyTaskDetail(_taskId),
-          builder: (context, snapshot) {
-            return _buildContent(context, snapshot);
-          },
+        appBar: AppBar(
+          title: Text("Daily task detail"),
+          //hide back button
+          //automaticallyImplyLeading: false,
         ),
-      )
-    );
+        body: Center(
+          child: FutureBuilder(
+            future: taskDetailScreenBloc.getDailyTaskDetail(_taskId),
+            builder: (context, snapshot) {
+              return _buildContent(context, snapshot);
+            },
+          ),
+        ));
   }
 
   Widget _buildContent(BuildContext context, AsyncSnapshot snapshot) {
@@ -74,7 +70,9 @@ class DailyTaskDetailScreen extends StatelessWidget {
           decoration: InputDecoration(
             labelText: 'Task expired time',
           ),
-          initialValue: '${timeFormat.format(taskDetail.expiredHour)}:${timeFormat.format(taskDetail.expiredMinute)}',
+          initialValue:
+          '${timeFormat.format(taskDetail.expiredHour)}:${timeFormat.format(
+              taskDetail.expiredMinute)}',
         ),
         CheckboxListTile(
           value: taskDetail.monday,

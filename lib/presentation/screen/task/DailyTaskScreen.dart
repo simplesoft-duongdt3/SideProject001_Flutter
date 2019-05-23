@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_app/main.dart';
 import 'package:flutter_app/presentation/bloc/TaskScreenBloc.dart';
 import 'package:flutter_app/presentation/model/PresentationModel.dart';
 import 'package:flutter_app/presentation/route/RouteProvider.dart';
 import 'package:intl/intl.dart';
-
-import '../../main.dart';
 
 class DailyTaskScreen extends StatefulWidget {
   DailyTaskScreen({Key key}) : super(key: key);
@@ -21,6 +20,7 @@ class DailyTaskScreenState extends State<DailyTaskScreen> {
   final RouterProvider _routerProvider = diResolver.resolve();
   bool isLoading = true;
   var timeFormat = new NumberFormat("00", "en_US");
+
   DailyTaskScreenState();
 
   @override
@@ -95,8 +95,8 @@ class DailyTaskScreenState extends State<DailyTaskScreen> {
     );
   }
 
-  Widget buildListItem(
-      List<DailyTaskPresentationModel> eventList, BuildContext context, int index) {
+  Widget buildListItem(List<DailyTaskPresentationModel> eventList,
+      BuildContext context, int index) {
     var event = eventList[index];
     return ListTile(
       onTap: () => _goToTaskDetail(context, event),
@@ -114,8 +114,10 @@ class DailyTaskScreenState extends State<DailyTaskScreen> {
     );
   }
 
-  Future _goToTaskDetail(BuildContext context, DailyTaskPresentationModel event) {
-    return Navigator.of(context).push(_routerProvider.getDailyTaskDetailScreen(event.taskId));
+  Future _goToTaskDetail(BuildContext context,
+      DailyTaskPresentationModel event) {
+    return Navigator.of(context)
+        .push(_routerProvider.getDailyTaskDetailScreen(event.taskId));
   }
 
   Widget buildStatusWidget(DailyTaskPresentationModel event) {
