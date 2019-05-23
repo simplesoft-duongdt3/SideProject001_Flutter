@@ -7,11 +7,12 @@ abstract class EventRepository {
   Future<void> disableOneTimeEvent(DisableOneTimeTaskDomainModel disableEventDataModel);
   Future<void> doneEvent(DoneDailyTaskDomainModel doneEventDomainModel);
   Future<List<TodayTodoDomainModel>> getTodayTodos();
-  Future<List<TaskDomainModel>> getActiveDailyTasks();
-  Future<List<TaskDomainModel>> getActiveOneTimeTasks();
+  Future<List<DailyTaskDomainModel>> getActiveDailyTasks();
+  Future<List<OneTimeTaskDomainModel>> getActiveOneTimeTasks();
   Future<List<TaskHistoryDomainModel>> getTaskHistoryReport(
       ReportTimeEnum reportTimeEnum);
-  Future<TaskDetailDomainModel> getTaskDailyDetail(String taskId);
+  Future<DailyTaskDetailDomainModel> getDailyTaskDetail(String taskId);
+  Future<OneTimeTaskDetailDomainModel> getOneTimeTaskDetail(String taskId);
 }
 
 abstract class UserRepository {

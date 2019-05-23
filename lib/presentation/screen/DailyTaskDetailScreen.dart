@@ -9,22 +9,22 @@ import 'package:intl/intl.dart';
 
 import '../../main.dart';
 
-class TaskDetailScreen extends StatelessWidget {
+class DailyTaskDetailScreen extends StatelessWidget {
   final String _taskId;
-  TaskDetailScreen(this._taskId, {Key key}) : super(key: key);
+  DailyTaskDetailScreen(this._taskId, {Key key}) : super(key: key);
   final TaskDetailScreenBloc taskDetailScreenBloc = diResolver.resolve();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Task detail"),
+        title: Text("Daily task detail"),
         //hide back button
         //automaticallyImplyLeading: false,
       ),
       body: Center(
         child: FutureBuilder(
-          future: taskDetailScreenBloc.getTaskDetail(_taskId),
+          future: taskDetailScreenBloc.getDailyTaskDetail(_taskId),
           builder: (context, snapshot) {
             return _buildContent(context, snapshot);
           },
@@ -36,7 +36,7 @@ class TaskDetailScreen extends StatelessWidget {
   Widget _buildContent(BuildContext context, AsyncSnapshot snapshot) {
     if (snapshot.connectionState == ConnectionState.done) {
       if (snapshot.hasData) {
-        TaskDetailPresentationModel taskDetail = snapshot.data;
+        DailyTaskDetailPresentationModel taskDetail = snapshot.data;
         return _buildTaskDetailWidget(taskDetail);
       } else {
         return _buildErrorWidget();
@@ -57,7 +57,7 @@ class TaskDetailScreen extends StatelessWidget {
     return CircularProgressIndicator();
   }
 
-  Widget _buildTaskDetailWidget(TaskDetailPresentationModel taskDetail) {
+  Widget _buildTaskDetailWidget(DailyTaskDetailPresentationModel taskDetail) {
     var timeFormat = new NumberFormat("00", "en_US");
     return new ListView(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),

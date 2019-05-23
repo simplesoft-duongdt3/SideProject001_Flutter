@@ -101,7 +101,7 @@ class EventRepositoryImpl implements EventRepository {
           saveEventDataModel.sunday);
 
       var uid = loginUser.uid;
-      var pushTask = _fireDatabaseController.getOneTimeTaskRef(uid).push();
+      var pushTask = _fireDatabaseController.getDailyTaskRef(uid).push();
       await pushTask.set(eventDataModel.toJson());
     }
   }
@@ -221,20 +221,23 @@ class EventRepositoryImpl implements EventRepository {
 
   Future<List<TaskHistoryDomainModel>> _getOneTimeTaskHistoryReport(
       String uid, ReportTimeEnum reportTimeEnum) async {
-    var dateValueToday = _getReportDateValues(reportTimeEnum);
+    var dateValues = _getReportDateValues(reportTimeEnum);
     List<OneTimeTaskHistoryFirebaseDataModel> foundHistories = [];
-    DataSnapshot dataSnapshot = await _fireDatabaseController
-        .getOneTimeTaskHistoryRef(uid)
-        .orderByChild("date")
-        .equalTo(dateValueToday)
-        .once();
 
-    if (dataSnapshot.value != null) {
-      Map<dynamic, dynamic> values = dataSnapshot.value;
-      values.forEach((key, values) {
-        foundHistories
-            .add(OneTimeTaskHistoryFirebaseDataModel.from(key, values));
-      });
+    for (var date in dateValues) {
+      DataSnapshot dataSnapshot = await _fireDatabaseController
+          .getOneTimeTaskHistoryRef(uid)
+          .orderByChild("date")
+          .equalTo(date)
+          .once();
+
+      if (dataSnapshot.value != null) {
+        Map<dynamic, dynamic> values = dataSnapshot.value;
+        values.forEach((key, values) {
+          foundHistories
+              .add(OneTimeTaskHistoryFirebaseDataModel.from(key, values));
+        });
+      }
     }
 
     foundHistories = foundHistories
@@ -242,7 +245,14 @@ class EventRepositoryImpl implements EventRepository {
             history.status == TaskStatusDataConstant.STATUS_TODO &&
             history.enable)
         .toList(growable: true);
-    foundHistories.sort((a, b) => a.expiredTime.compareTo(b.expiredTime));
+    foundHistories.sort((a, b) {
+      var dateCompare = a.date.compareTo(b.date);
+      if (dateCompare == 0) {
+        return a.expiredTime.compareTo(b.expiredTime);
+      } else {
+        return dateCompare;
+      }
+    });
 
     return foundHistories
         .map((history) => _mapOneTimeHistory(history))
@@ -287,7 +297,14 @@ class EventRepositoryImpl implements EventRepository {
         .where(
             (history) => history.status == TaskStatusDataConstant.STATUS_TODO)
         .toList(growable: true);
-    foundHistories.sort((a, b) => a.expiredTime.compareTo(b.expiredTime));
+    foundHistories.sort((a, b) {
+      var dateCompare = a.date.compareTo(b.date);
+      if (dateCompare == 0) {
+        return a.expiredTime.compareTo(b.expiredTime);
+      } else {
+        return dateCompare;
+      }
+    });
     List<TodayTodoDomainModel> matchedEvents = foundHistories
         .map((eventDataModel) => _mapDailyTaskDataToTaskDomain(eventDataModel))
         .toList(growable: true);
@@ -295,13 +312,10 @@ class EventRepositoryImpl implements EventRepository {
   }
 
   Future<List<TodayTodoDomainModel>> _getTodayOneTimeTodos(String uid) async {
-    var dateValue = _getDateValueToday();
+    int dateValue = _getDateValueToday();
     List<OneTimeTaskHistoryFirebaseDataModel> foundHistories = [];
-    DataSnapshot dataSnapshot = await _fireDatabaseController
-        .getOneTimeTaskHistoryRef(uid)
-        .orderByChild("date")
-        .equalTo(dateValue)
-        .once();
+    DataSnapshot dataSnapshot =
+        await _fireDatabaseController.getOneTimeTaskHistoryRef(uid).once();
 
     if (dataSnapshot.value != null) {
       Map<dynamic, dynamic> values = dataSnapshot.value;
@@ -313,10 +327,18 @@ class EventRepositoryImpl implements EventRepository {
 
     foundHistories = foundHistories
         .where((history) =>
+            history.date == dateValue &&
             history.status == TaskStatusDataConstant.STATUS_TODO &&
             history.enable)
         .toList(growable: true);
-    foundHistories.sort((a, b) => a.expiredTime.compareTo(b.expiredTime));
+    foundHistories.sort((a, b) {
+      var dateCompare = a.date.compareTo(b.date);
+      if (dateCompare == 0) {
+        return a.expiredTime.compareTo(b.expiredTime);
+      } else {
+        return dateCompare;
+      }
+    });
     List<TodayTodoDomainModel> matchedEvents = foundHistories
         .map(
             (eventDataModel) => _mapOneTimeTaskDataToTaskDomain(eventDataModel))
@@ -442,15 +464,17 @@ class EventRepositoryImpl implements EventRepository {
       String uid) async {
     List<OneTimeTaskFirebaseDataModel> matchedTasks = [];
     DataSnapshot dataSnapshot =
-        await _fireDatabaseController.getOneTimeTaskHistoryRef(uid).once();
+        await _fireDatabaseController.getOneTimeTaskRef(uid).once();
     if (dataSnapshot.value != null) {
       Map<dynamic, dynamic> values = dataSnapshot.value;
       values.forEach((key, values) {
         matchedTasks.add(OneTimeTaskFirebaseDataModel.from(key, values));
       });
     }
+
+    var todayDateValue = _getDateValueToday();
     matchedTasks =
-        matchedTasks.where((event) => event.enable).toList(growable: true);
+        matchedTasks.where((task) => task.enable && task.expiredDate >= todayDateValue).toList(growable: true);
     return matchedTasks;
   }
 
@@ -599,8 +623,8 @@ class EventRepositoryImpl implements EventRepository {
   }
 
   @override
-  Future<List<TaskDomainModel>> getActiveDailyTasks() async {
-    List<TaskDomainModel> tasks = [];
+  Future<List<DailyTaskDomainModel>> getActiveDailyTasks() async {
+    List<DailyTaskDomainModel> tasks = [];
     LoginUserFirebaseDataModel loginUser = await _getLoginUser();
     if (loginUser != null) {
       var uid = loginUser.uid;
@@ -620,8 +644,8 @@ class EventRepositoryImpl implements EventRepository {
   }
 
   @override
-  Future<List<TaskDomainModel>> getActiveOneTimeTasks() async {
-    List<TaskDomainModel> tasks = [];
+  Future<List<OneTimeTaskDomainModel>> getActiveOneTimeTasks() async {
+    List<OneTimeTaskDomainModel> tasks = [];
     LoginUserFirebaseDataModel loginUser = await _getLoginUser();
     if (loginUser != null) {
       var uid = loginUser.uid;
@@ -629,7 +653,12 @@ class EventRepositoryImpl implements EventRepository {
           await _getActiveOneTimeTasks(uid);
 
       matchedTasks.sort((a, b) {
-        return a.expiredTime.compareTo(b.expiredTime);
+        var dateCompare = a.expiredDate.compareTo(b.expiredDate);
+        if (dateCompare == 0) {
+          return a.expiredTime.compareTo(b.expiredTime);
+        } else {
+          return dateCompare;
+        }
       });
 
       tasks = matchedTasks
@@ -640,19 +669,26 @@ class EventRepositoryImpl implements EventRepository {
     return tasks;
   }
 
-  TaskDomainModel _mapOneTimeTask(OneTimeTaskFirebaseDataModel task) {
-    return TaskDomainModel(
-        task.id, task.name, task.expiredHour, task.expiredMinute);
+  OneTimeTaskDomainModel _mapOneTimeTask(OneTimeTaskFirebaseDataModel task) {
+    return OneTimeTaskDomainModel(
+      task.id,
+      task.name,
+      task.expiredHour,
+      task.expiredMinute,
+      task.expiredDay,
+      task.expiredMonth,
+      task.expiredYear,
+    );
   }
 
-  TaskDomainModel _mapDailyTask(DailyTaskFirebaseDataModel task) {
-    return TaskDomainModel(
+  DailyTaskDomainModel _mapDailyTask(DailyTaskFirebaseDataModel task) {
+    return DailyTaskDomainModel(
         task.id, task.name, task.expiredHour, task.expiredMinute);
   }
 
   @override
-  Future<TaskDetailDomainModel> getTaskDailyDetail(String taskId) async {
-    TaskDetailDomainModel taskDetailDomainModel;
+  Future<DailyTaskDetailDomainModel> getDailyTaskDetail(String taskId) async {
+    DailyTaskDetailDomainModel taskDetailDomainModel;
     LoginUserFirebaseDataModel loginUser = await _getLoginUser();
     if (loginUser != null) {
       var uid = loginUser.uid;
@@ -662,17 +698,17 @@ class EventRepositoryImpl implements EventRepository {
       if (dataSnapshot.value != null) {
         var eventFirebaseDataModel = DailyTaskFirebaseDataModel.from(
             dataSnapshot.key, dataSnapshot.value);
-        taskDetailDomainModel = _mapDetailTask(eventFirebaseDataModel);
+        taskDetailDomainModel = _mapDailyTaskDetail(eventFirebaseDataModel);
       }
     }
     return taskDetailDomainModel;
   }
 
-  TaskDetailDomainModel _mapDetailTask(
+  DailyTaskDetailDomainModel _mapDailyTaskDetail(
       DailyTaskFirebaseDataModel eventFirebaseDataModel) {
-    TaskDetailDomainModel taskDetailDomainModel;
+    DailyTaskDetailDomainModel taskDetailDomainModel;
     if (eventFirebaseDataModel != null) {
-      taskDetailDomainModel = TaskDetailDomainModel(
+      taskDetailDomainModel = DailyTaskDetailDomainModel(
         eventFirebaseDataModel.name,
         eventFirebaseDataModel.expiredHour,
         eventFirebaseDataModel.expiredMinute,
@@ -786,7 +822,6 @@ class EventRepositoryImpl implements EventRepository {
           "enableTimeEnd": enableTimeEnd,
           "updateTime": updateTime,
         });
-
         await _removeHistoryOneTimeTask(uid, oneTimeEventId);
       }
     }
@@ -805,5 +840,39 @@ class EventRepositoryImpl implements EventRepository {
           .getOneTimeTaskWithIdRef(uid, historyKey)
           .update({"enable": false});
     }
+  }
+
+  OneTimeTaskDetailDomainModel _mapOneTimeTaskDetail(
+      OneTimeTaskFirebaseDataModel task) {
+    OneTimeTaskDetailDomainModel taskDetailDomainModel;
+    if (task != null) {
+      taskDetailDomainModel = OneTimeTaskDetailDomainModel(
+        task.name,
+        task.expiredHour,
+        task.expiredMinute,
+        task.expiredDay,
+        task.expiredMonth,
+        task.expiredYear,
+      );
+    }
+    return taskDetailDomainModel;
+  }
+
+  @override
+  Future<OneTimeTaskDetailDomainModel> getOneTimeTaskDetail(String taskId) async {
+    OneTimeTaskDetailDomainModel taskDetailDomainModel;
+    LoginUserFirebaseDataModel loginUser = await _getLoginUser();
+    if (loginUser != null) {
+      var uid = loginUser.uid;
+      DataSnapshot dataSnapshot = await _fireDatabaseController
+          .getOneTimeTaskWithIdRef(uid, taskId)
+          .once();
+      if (dataSnapshot.value != null) {
+        var task = OneTimeTaskFirebaseDataModel.from(
+            dataSnapshot.key, dataSnapshot.value);
+        taskDetailDomainModel = _mapOneTimeTaskDetail(task);
+      }
+    }
+    return taskDetailDomainModel;
   }
 }

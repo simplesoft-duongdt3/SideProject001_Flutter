@@ -2,6 +2,7 @@ import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_app/domain/Util.dart';
 import 'package:flutter_app/presentation/bloc/AddTaskScreenBloc.dart';
 import 'package:flutter_app/presentation/model/PresentationModel.dart';
 import 'package:intl/intl.dart';
@@ -167,6 +168,17 @@ class _AddOneTimeTaskScreenState extends State<AddOneTimeTaskScreen> {
     if (!validExpiredDate) {
       _showUserWarning('Input expired date.');
     }
+
+    if (validExpiredDate) {
+      var dateExpired = Util.calcTaskDateExpired(_addEventPresentationModel.expiredYear, _addEventPresentationModel.expiredMonth, _addEventPresentationModel.expiredDay);
+      var now = Util.calcTaskDateToday();
+      validExpiredDate = dateExpired >= now;
+
+      if (!validExpiredDate) {
+        _showUserWarning('Expired date is not valid.');
+      }
+    }
+
     return validExpiredDate;
   }
 

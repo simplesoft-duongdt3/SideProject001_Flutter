@@ -134,7 +134,7 @@ class TodayTodosScreenState extends State<TodayTodosScreen> {
     var event = eventList[index];
     return ListTile(
       onTap: () {
-        _goToTaskDetail(context, event.eventId);
+        _goToTaskDetail(context, event.eventId, event.type);
       },
       leading: Icon(
         Icons.event_note,
@@ -257,8 +257,17 @@ class TodayTodosScreenState extends State<TodayTodosScreen> {
     Navigator.of(context).push(_routerProvider.getShareQrScreen());
   }
 
-  Future _goToTaskDetail(BuildContext context, String taskId) {
-    return Navigator.of(context)
-        .push(_routerProvider.getTaskDetailScreen(taskId));
+  void _goToTaskDetail(BuildContext context, String taskId, TaskType type) {
+    switch(type) {
+      case TaskType.DAILY:
+        Navigator.of(context)
+            .push(_routerProvider.getDailyTaskDetailScreen(taskId));
+        break;
+      case TaskType.ONE_TIME:
+        Navigator.of(context)
+            .push(_routerProvider.getOneTimeTaskDetailScreen(taskId));
+        break;
+    }
+
   }
 }

@@ -101,7 +101,7 @@ class AddOneTimeTaskPresentationModel {
   );
 }
 
-class TaskDetailPresentationModel {
+class DailyTaskDetailPresentationModel {
   String name;
   int expiredHour;
   int expiredMinute;
@@ -113,7 +113,7 @@ class TaskDetailPresentationModel {
   bool saturday;
   bool sunday;
 
-  TaskDetailPresentationModel(
+  DailyTaskDetailPresentationModel(
       this.name,
       this.expiredHour,
       this.expiredMinute,
@@ -124,6 +124,19 @@ class TaskDetailPresentationModel {
       this.friday,
       this.saturday,
       this.sunday);
+}
+
+class OneTimeTaskDetailPresentationModel {
+  String name;
+  int expiredHour;
+  int expiredMinute;
+  int expiredDay;
+  int expiredMonth;
+  int expiredYear;
+
+  OneTimeTaskDetailPresentationModel(this.name, this.expiredHour,
+      this.expiredMinute, this.expiredDay, this.expiredMonth, this.expiredYear);
+
 }
 
 class TaskHistoryPresentationModel {
@@ -139,13 +152,13 @@ class TaskHistoryPresentationModel {
       this.expiredHour, this.expiredMinute, this.createdTime, this.status);
 }
 
-class TaskPresentationModel {
+class DailyTaskPresentationModel {
   String _taskId;
   String _name;
   int _expiredHour;
   int _expiredMinute;
 
-  TaskPresentationModel(
+  DailyTaskPresentationModel(
       this._taskId, this._name, this._expiredHour, this._expiredMinute);
 
   String get name => _name;
@@ -155,4 +168,34 @@ class TaskPresentationModel {
   int get expiredMinute => _expiredMinute;
 
   int get expiredHour => _expiredHour;
+}
+
+class OneTimeTaskPresentationModel {
+  String _taskId;
+  String _name;
+  int _expiredHour;
+  int _expiredMinute;
+  int _expiredDay;
+  int _expiredMonth;
+  int _expiredYear;
+
+  OneTimeTaskPresentationModel(this._taskId, this._name, this._expiredHour,
+      this._expiredMinute, this._expiredDay, this._expiredMonth,
+      this._expiredYear);
+
+  int get expiredYear => _expiredYear;
+
+  int get expiredMonth => _expiredMonth;
+
+  int get expiredDay => _expiredDay;
+
+  int get expiredMinute => _expiredMinute;
+
+  int get expiredHour => _expiredHour;
+
+  String get name => _name;
+
+  String get taskId => _taskId;
+
+
 }

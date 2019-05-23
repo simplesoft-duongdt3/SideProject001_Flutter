@@ -25,13 +25,13 @@ class LoginUserDomainModel {
   }
 }
 
-class TaskDomainModel {
+class DailyTaskDomainModel {
   String _taskId;
   String _name;
   int _expiredHour;
   int _expiredMinute;
 
-  TaskDomainModel(
+  DailyTaskDomainModel(
       this._taskId, this._name, this._expiredHour, this._expiredMinute);
 
   String get name => _name;
@@ -41,6 +41,34 @@ class TaskDomainModel {
   int get expiredMinute => _expiredMinute;
 
   int get expiredHour => _expiredHour;
+}
+
+class OneTimeTaskDomainModel {
+  String _taskId;
+  String _name;
+  int _expiredHour;
+  int _expiredMinute;
+  int _expiredDay;
+  int _expiredMonth;
+  int _expiredYear;
+
+  OneTimeTaskDomainModel(this._taskId, this._name, this._expiredHour,
+      this._expiredMinute, this._expiredDay, this._expiredMonth,
+      this._expiredYear);
+
+  int get expiredYear => _expiredYear;
+
+  int get expiredMonth => _expiredMonth;
+
+  int get expiredDay => _expiredDay;
+
+  int get expiredMinute => _expiredMinute;
+
+  int get expiredHour => _expiredHour;
+
+  String get name => _name;
+
+  String get taskId => _taskId;
 }
 
 class TodayTodoDomainModel {
@@ -162,7 +190,34 @@ class SaveOneTimeTaskDomainModel {
   String get name => _name;
 }
 
-class TaskDetailDomainModel {
+class OneTimeTaskDetailDomainModel {
+  String _name;
+  int _expiredHour;
+  int _expiredMinute;
+  int _expiredDay;
+  int _expiredMonth;
+  int _expiredYear;
+
+  OneTimeTaskDetailDomainModel(this._name, this._expiredHour,
+      this._expiredMinute, this._expiredDay, this._expiredMonth,
+      this._expiredYear);
+
+  int get expiredYear => _expiredYear;
+
+  int get expiredMonth => _expiredMonth;
+
+  int get expiredDay => _expiredDay;
+
+  int get expiredMinute => _expiredMinute;
+
+  int get expiredHour => _expiredHour;
+
+  String get name => _name;
+
+
+}
+
+class DailyTaskDetailDomainModel {
   String _name;
   int _expiredHour;
   int _expiredMinute;
@@ -174,7 +229,7 @@ class TaskDetailDomainModel {
   bool _saturday;
   bool _sunday;
 
-  TaskDetailDomainModel(
+  DailyTaskDetailDomainModel(
     this._name,
     this._expiredHour,
     this._expiredMinute,

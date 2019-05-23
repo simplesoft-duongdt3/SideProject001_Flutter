@@ -7,17 +7,24 @@ import '../../main.dart';
 class TaskDetailScreenBloc {
   EventRepository _eventRepository = diResolver.resolve();
 
-  Future<TaskDetailPresentationModel> getTaskDetail(String taskId) async {
-    var taskDetail = await _eventRepository.getTaskDailyDetail(taskId);
-    return _mapTaskDetail(taskDetail);
+  Future<DailyTaskDetailPresentationModel> getDailyTaskDetail(
+      String taskId) async {
+    var taskDetail = await _eventRepository.getDailyTaskDetail(taskId);
+    return _mapDailyTaskDetail(taskDetail);
   }
 
-  TaskDetailPresentationModel _mapTaskDetail(
-      TaskDetailDomainModel taskDetailDomainModel) {
-    TaskDetailPresentationModel detailPresentationModel;
+  Future<OneTimeTaskDetailPresentationModel> getOneTimeTaskDetail(
+      String taskId) async {
+    var taskDetail = await _eventRepository.getOneTimeTaskDetail(taskId);
+    return _mapOneTimeTaskDetail(taskDetail);
+  }
+
+  DailyTaskDetailPresentationModel _mapDailyTaskDetail(
+      DailyTaskDetailDomainModel taskDetailDomainModel) {
+    DailyTaskDetailPresentationModel detailPresentationModel;
 
     if (taskDetailDomainModel != null) {
-      detailPresentationModel = TaskDetailPresentationModel(
+      detailPresentationModel = DailyTaskDetailPresentationModel(
           taskDetailDomainModel.name,
           taskDetailDomainModel.expiredHour,
           taskDetailDomainModel.expiredMinute,
@@ -31,5 +38,17 @@ class TaskDetailScreenBloc {
     }
 
     return detailPresentationModel;
+  }
+
+  OneTimeTaskDetailPresentationModel _mapOneTimeTaskDetail(
+      OneTimeTaskDetailDomainModel taskDetail) {
+    return OneTimeTaskDetailPresentationModel(
+      taskDetail.name,
+      taskDetail.expiredHour,
+      taskDetail.expiredMinute,
+      taskDetail.expiredDay,
+      taskDetail.expiredMonth,
+      taskDetail.expiredYear,
+    );
   }
 }

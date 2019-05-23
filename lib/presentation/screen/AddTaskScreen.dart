@@ -7,25 +7,32 @@ import 'AddDailyTaskScreen.dart';
 import 'AddOneTimeTaskScreen.dart';
 
 class AddTaskScreen extends StatefulWidget {
-  AddTaskScreen({Key key}) : super(key: key);
+  final AddTaskScreenTabSelect _selectedTab;
+  AddTaskScreen(this._selectedTab, {Key key}) : super(key: key);
 
   @override
   _AddTaskScreenState createState() {
-    return _AddTaskScreenState("Add tasks");
+    return _AddTaskScreenState("Add tasks", _selectedTab);
   }
 }
 
+enum AddTaskScreenTabSelect {
+  DAILY,
+  ONE_TIME
+}
+
 class _AddTaskScreenState extends State<AddTaskScreen> {
+  final AddTaskScreenTabSelect _selectedTab;
   final String _title;
   final AddTaskScreenBloc addTaskScreenBloc = diResolver.resolve();
   final GlobalKey<ScaffoldState> _scaffoldState = GlobalKey<ScaffoldState>();
 
-  _AddTaskScreenState(this._title);
+  _AddTaskScreenState(this._title, this._selectedTab);
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      initialIndex: 0,
+      initialIndex: getInitTabIndex(),
       length: 2,
       child: Scaffold(
         key: _scaffoldState,
@@ -56,5 +63,13 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         Tab(text: "One time"),
       ],
     );
+  }
+
+  int getInitTabIndex() {
+    if (_selectedTab == AddTaskScreenTabSelect.DAILY) {
+        return 0;
+    } else {
+      return 1;
+    }
   }
 }

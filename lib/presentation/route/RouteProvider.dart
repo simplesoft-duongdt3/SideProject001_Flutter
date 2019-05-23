@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/presentation/screen/AddTaskScreen.dart';
 import 'package:flutter_app/presentation/screen/HistoryScreen.dart';
+import 'package:flutter_app/presentation/screen/OneTimeTaskDetailScreen.dart';
 import 'package:flutter_app/presentation/screen/ShareQrScreen.dart';
 import 'package:flutter_app/presentation/screen/SignInScreen.dart';
 import 'package:flutter_app/presentation/screen/SignUpScreen.dart';
 import 'package:flutter_app/presentation/screen/SplashScreen.dart';
-import 'package:flutter_app/presentation/screen/TaskDetailScreen.dart';
+import 'package:flutter_app/presentation/screen/DailyTaskDetailScreen.dart';
 import 'package:flutter_app/presentation/screen/TaskScreen.dart';
 import 'package:flutter_app/presentation/screen/TodayTodosScreen.dart';
 
@@ -38,11 +39,15 @@ class RouterProvider {
     return MaterialPageRoute(builder: (context) => TaskScreen());
   }
 
-  MaterialPageRoute getAddTaskScreen() {
-    return MaterialPageRoute(builder: (context) => AddTaskScreen());
+  MaterialPageRoute getAddTaskScreen(AddTaskScreenTabSelect tabSelect) {
+    return MaterialPageRoute(builder: (context) => AddTaskScreen(tabSelect));
   }
 
-  MaterialPageRoute getTaskDetailScreen(String taskId) {
-    return MaterialPageRoute(builder: (context) => TaskDetailScreen(taskId));
+  MaterialPageRoute getDailyTaskDetailScreen(String taskId) {
+    return MaterialPageRoute(builder: (context) => DailyTaskDetailScreen(taskId));
+  }
+
+  MaterialPageRoute getOneTimeTaskDetailScreen(String taskId) {
+    return MaterialPageRoute(builder: (context) => OneTimeTaskDetailScreen(taskId));
   }
 }
