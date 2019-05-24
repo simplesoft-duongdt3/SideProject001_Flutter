@@ -55,6 +55,10 @@ class FireDatabaseController {
     return _firebaseDatabase.reference().child("user/$uid");
   }
 
+  DatabaseReference getFriendRequestRef() {
+    return _firebaseDatabase.reference().child("friend_request");
+  }
+
   DatabaseReference getDailyTaskRef(String uid) {
     return _firebaseDatabase.reference().child("task/$uid");
   }
@@ -86,11 +90,10 @@ class FireDatabaseController {
   DatabaseReference getOneTimeTaskHistoryWithIdRef(String uid, String historyId) {
     return _firebaseDatabase.reference().child("one_time_task_history/$uid/$historyId");
   }
-
 }
 
 class FireAppController {
-  void init() async {
+  Future<void> init() async {
     await FirebaseApp.configure(
       //TODO firebase info
     );

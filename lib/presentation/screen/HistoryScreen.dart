@@ -21,13 +21,10 @@ class HistoryScreenState extends State<HistoryScreen> {
   final HistoryScreenBloc _mainScreenBloc = diResolver.resolve();
   var timeFormat = new NumberFormat("00", "en_US");
 
-  final List<ReportTimeEnum> _reportTabs = [
-    ReportTimeEnum.LAST_WEEK,
-    ReportTimeEnum.YESTERDAY,
-    ReportTimeEnum.TODAY
-  ];
+  final List<ReportTimeEnum> _reportTabs = ReportTimeEnum.values;
+
   //default today tab
-  final int _initTabPos = 2;
+  final int _initTabPos = 0;
 
   HistoryScreenState(this._title);
 
@@ -41,6 +38,7 @@ class HistoryScreenState extends State<HistoryScreen> {
           title: Text(_title),
           bottom: TabBar(
             tabs: _buildTabs(),
+            isScrollable: true,
           ),
         ),
         body: _createTabViews(context),
@@ -63,6 +61,9 @@ class HistoryScreenState extends State<HistoryScreen> {
       case ReportTimeEnum.LAST_WEEK:
         return Tab(text: "Last week");
         break;
+      case ReportTimeEnum.THIS_WEEK:
+        return Tab(text: "This week");
+        break;
     }
     return Tab(text: "Unknown");
   }
@@ -81,7 +82,7 @@ class HistoryScreenState extends State<HistoryScreen> {
                 if (eventList.isEmpty) {
                   return buildEmptyListWidget();
                 } else {
-                  return buildListWidget(eventList);
+                  return buildListWidget(eventList, reportTime);
                 }
               } else {
                 return buildErrorWidget();
@@ -107,13 +108,15 @@ class HistoryScreenState extends State<HistoryScreen> {
     return CircularProgressIndicator();
   }
 
-  RefreshIndicator buildListWidget(
-      List<TaskHistoryPresentationModel> eventList) {
+  RefreshIndicator buildListWidget(List<TaskHistoryPresentationModel> eventList,
+      ReportTimeEnum reportTime) {
+    bool isShowDate = reportTime == ReportTimeEnum.THIS_WEEK ||
+        reportTime == ReportTimeEnum.LAST_WEEK;
     return RefreshIndicator(
       onRefresh: _refreshData,
       child: ListView.separated(
         itemBuilder: (context, index) =>
-            buildListItem(eventList, context, index),
+            buildListItem(eventList, context, index, isShowDate),
         scrollDirection: Axis.vertical,
         itemCount: eventList.length,
         separatorBuilder: (context, index) => Divider(
@@ -136,8 +139,17 @@ class HistoryScreenState extends State<HistoryScreen> {
   }
 
   Widget buildListItem(List<TaskHistoryPresentationModel> eventList,
-      BuildContext context, int index) {
+      BuildContext context, int index, bool isShowDate) {
     TaskHistoryPresentationModel history = eventList[index];
+
+    var formattedDay = timeFormat.format(history.expiredDay);
+    var formattedMonth = timeFormat.format(history.expiredMonth);
+    var formattedHour = timeFormat.format(history.expiredHour);
+    var formattedMinute = timeFormat.format(history.expiredMinute);
+    var dateTime = isShowDate
+        ? '$formattedDay/$formattedMonth/${history
+        .expiredYear} $formattedHour:$formattedMinute'
+        : '$formattedHour:$formattedMinute';
     return ListTile(
       leading: Icon(
         Icons.event_note,
@@ -147,7 +159,7 @@ class HistoryScreenState extends State<HistoryScreen> {
         history.eventName,
       ),
       subtitle: Text(
-        '${timeFormat.format(history.expiredHour)}:${timeFormat.format(history.expiredMinute)}',
+        dateTime,
       ),
       trailing: Text(
         _mapTextFromStatus(history.status),
@@ -179,6 +191,6 @@ class HistoryScreenState extends State<HistoryScreen> {
       children: [
         for (var report in _reportTabs) _buildContentWidget(context, report)
       ],
-    ) ;
+    );
   }
 }

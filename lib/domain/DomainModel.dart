@@ -52,8 +52,12 @@ class OneTimeTaskDomainModel {
   int _expiredMonth;
   int _expiredYear;
 
-  OneTimeTaskDomainModel(this._taskId, this._name, this._expiredHour,
-      this._expiredMinute, this._expiredDay, this._expiredMonth,
+  OneTimeTaskDomainModel(this._taskId,
+      this._name,
+      this._expiredHour,
+      this._expiredMinute,
+      this._expiredDay,
+      this._expiredMonth,
       this._expiredYear);
 
   int get expiredYear => _expiredYear;
@@ -198,8 +202,11 @@ class OneTimeTaskDetailDomainModel {
   int _expiredMonth;
   int _expiredYear;
 
-  OneTimeTaskDetailDomainModel(this._name, this._expiredHour,
-      this._expiredMinute, this._expiredDay, this._expiredMonth,
+  OneTimeTaskDetailDomainModel(this._name,
+      this._expiredHour,
+      this._expiredMinute,
+      this._expiredDay,
+      this._expiredMonth,
       this._expiredYear);
 
   int get expiredYear => _expiredYear;
@@ -213,8 +220,6 @@ class OneTimeTaskDetailDomainModel {
   int get expiredHour => _expiredHour;
 
   String get name => _name;
-
-
 }
 
 class DailyTaskDetailDomainModel {
@@ -302,32 +307,112 @@ class DoneOneTimeTaskDomainModel {
 }
 
 class TaskHistoryDomainModel {
-  String _eventId;
-  String _eventName;
-  int _doneTime;
-  int _expiredHour;
-  int _expiredMinute;
-  int _createdTime;
-  TaskStatus _status;
+  String eventId;
+  String eventName;
+  int expiredTime;
+  int doneTime;
+  int date;
+  int expiredHour;
+  int expiredMinute;
+  int createdTime;
+  int expiredDay;
+  int expiredMonth;
+  int expiredYear;
+  TaskStatus status;
 
-  TaskHistoryDomainModel(this._eventId, this._eventName, this._doneTime,
-      this._expiredHour, this._expiredMinute, this._createdTime, this._status);
-
-  TaskStatus get status => _status;
-
-  int get createdTime => _createdTime;
-
-  int get expiredMinute => _expiredMinute;
-
-  int get expiredHour => _expiredHour;
-
-  int get doneTime => _doneTime;
-
-  String get eventName => _eventName;
-
-  String get eventId => _eventId;
+  TaskHistoryDomainModel(this.eventId, this.eventName, this.expiredTime,
+      this.doneTime, this.date,
+      this.expiredHour, this.expiredMinute, this.createdTime, this.expiredDay,
+      this.expiredMonth, this.expiredYear, this.status);
 }
 
 class EventHistoryStatus {}
 
-enum ReportTimeEnum { LAST_WEEK, YESTERDAY, TODAY }
+enum ReportTimeEnum {
+  TODAY,
+  YESTERDAY,
+  THIS_WEEK,
+  LAST_WEEK,
+}
+enum FriendRequestStatusEnum {
+  STATUS_SENT,
+  STATUS_ACCEPT,
+  STATUS_DENY
+}
+
+class FriendRequestDomainModel {
+  String _uid;
+  String _userName;
+  String _email;
+  String _requestTime;
+  FriendRequestStatusEnum _status;
+
+  FriendRequestDomainModel(this._uid, this._userName, this._email,
+      this._requestTime, this._status);
+
+  String get requestTime => _requestTime;
+
+  String get email => _email;
+
+  String get userName => _userName;
+
+  String get uid => _uid;
+
+  FriendRequestStatusEnum get status => _status;
+
+}
+
+class ReceivedFriendRequestDomainModel {
+  String _email;
+  int _requestTime;
+  FriendRequestStatusEnum _status;
+
+  ReceivedFriendRequestDomainModel(this._email,
+      this._requestTime, this._status);
+
+  int get requestTime => _requestTime;
+
+  String get email => _email;
+
+  FriendRequestStatusEnum get status => _status;
+
+}
+
+class SendFriendRequestDomainModel {
+  String _email;
+  int _requestTime;
+  FriendRequestStatusEnum _status;
+
+  SendFriendRequestDomainModel(this._email,
+      this._requestTime, this._status);
+
+  int get requestTime => _requestTime;
+
+  String get email => _email;
+
+  FriendRequestStatusEnum get status => _status;
+
+}
+
+class FriendDomainModel {
+  String _uid;
+  String _userName;
+  String _email;
+
+  FriendDomainModel(this._uid, this._userName, this._email);
+
+  String get email => _email;
+
+  String get userName => _userName;
+
+  String get uid => _uid;
+
+}
+
+class AcceptFriendRequestDomainModel {
+  String _requestUid;
+
+  AcceptFriendRequestDomainModel(this._requestUid);
+
+  String get requestUid => _requestUid;
+}

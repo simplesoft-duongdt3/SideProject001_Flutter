@@ -6,7 +6,7 @@ import '../../main.dart';
 
 class TodayTodosScreenBloc {
   UserRepository _userRepository = diResolver.resolve();
-  EventRepository _eventRepository = diResolver.resolve();
+  TaskRepository _eventRepository = diResolver.resolve();
 
   Future<List<TodayTodoPresentationModel>> loadEventList() async {
     var todayEvents = await _eventRepository.getTodayTodos();

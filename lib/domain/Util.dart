@@ -11,4 +11,11 @@ class Util {
     var now = DateTime.now();
     return calcTaskDateExpired(now.year, now.month, now.day);
   }
+
+  static int getNowUtcMilliseconds() {
+    return DateTime
+        .now()
+        .toUtc()
+        .millisecondsSinceEpoch;
+  }
 }

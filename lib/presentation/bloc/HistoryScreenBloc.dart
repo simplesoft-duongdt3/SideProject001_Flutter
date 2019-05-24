@@ -5,7 +5,7 @@ import 'package:flutter_app/presentation/model/PresentationModel.dart';
 import '../../main.dart';
 
 class HistoryScreenBloc {
-  EventRepository _eventRepository = diResolver.resolve();
+  TaskRepository _eventRepository = diResolver.resolve();
 
   Future<List<TaskHistoryPresentationModel>> loadHistoryList(
       ReportTimeEnum reportTime) async {
@@ -24,6 +24,9 @@ class HistoryScreenBloc {
               history.expiredHour,
               history.expiredMinute,
               history.createdTime,
+      history.expiredDay,
+      history.expiredMonth,
+      history.expiredYear,
               history.status,
             ))
         .toList(growable: false);

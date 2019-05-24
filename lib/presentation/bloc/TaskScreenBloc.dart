@@ -5,7 +5,7 @@ import 'package:flutter_app/presentation/model/PresentationModel.dart';
 import '../../main.dart';
 
 class TaskScreenBloc {
-  EventRepository _eventRepository = diResolver.resolve();
+  TaskRepository _eventRepository = diResolver.resolve();
 
   Future<List<DailyTaskPresentationModel>> getActiveDailyTaskList() async {
     var tasks = await _eventRepository.getActiveDailyTasks();

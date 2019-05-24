@@ -292,3 +292,46 @@ class TaskStatusDataConstant {
   static const int STATUS_DONE = 1;
   static const int STATUS_DONE_LATE = 2;
 }
+
+class FriendRequestFirebaseDataModel {
+  String id;
+  String senderUid;
+  String senderEmail;
+  String receiverUid;
+  String receiverEmail;
+  int status;
+  int createdTime;
+  int updatedTime;
+
+  FriendRequestFirebaseDataModel(this.senderUid, this.senderEmail,
+      this.receiverUid, this.receiverEmail, this.status, this.createdTime,
+      this.updatedTime);
+
+  FriendRequestFirebaseDataModel.from(dynamic key, dynamic values)
+      : id = key,
+        senderUid = values["senderUid"],
+        senderEmail = values["senderEmail"],
+        receiverUid = values["receiverUid"],
+        receiverEmail = values["receiverEmail"],
+        status = values["status"],
+        createdTime = values["createdTime"],
+        updatedTime = values["updatedTime"];
+
+  toJson() {
+    return {
+      "senderUid": senderUid,
+      "senderEmail": senderEmail,
+      "receiverUid": receiverUid,
+      "receiverEmail": receiverEmail,
+      "status": status,
+      "createdTime": createdTime,
+      "updatedTime": updatedTime,
+    };
+  }
+}
+
+class FriendRequestStatusDataConstant {
+  static const int STATUS_SENT = 0;
+  static const int STATUS_ACCEPT = 1;
+  static const int STATUS_DENY = 2;
+}

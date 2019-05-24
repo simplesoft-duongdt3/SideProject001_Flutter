@@ -19,23 +19,32 @@ class LoginUserPresentationModel {
 }
 
 class TodayTodoPresentationModel {
-  String eventId;
-  String historyId;
-  String name;
-  int expiredHour;
-  int expiredMinute;
-  TaskStatus status;
-  TaskType type;
+  String _eventId;
+  String _historyId;
+  String _name;
+  int _expiredHour;
+  int _expiredMinute;
+  TaskStatus _status;
+  TaskType _type;
 
-  TodayTodoPresentationModel(
-    this.eventId,
-    this.historyId,
-    this.name,
-    this.expiredHour,
-    this.expiredMinute,
-    this.status,
-    this.type,
-  );
+  TodayTodoPresentationModel(this._eventId, this._historyId, this._name,
+      this._expiredHour, this._expiredMinute, this._status, this._type);
+
+  TaskType get type => _type;
+
+  TaskStatus get status => _status;
+
+  int get expiredMinute => _expiredMinute;
+
+  int get expiredHour => _expiredHour;
+
+  String get name => _name;
+
+  String get historyId => _historyId;
+
+  String get eventId => _eventId;
+
+
 }
 
 class AddDailyTaskPresentationModel {
@@ -91,65 +100,113 @@ class AddOneTimeTaskPresentationModel {
   int expiredMonth;
   int expiredYear;
 
-  AddOneTimeTaskPresentationModel(
-    this.name,
-    this.expiredHour,
-    this.expiredMinute,
-    this.expiredDay,
-    this.expiredMonth,
-    this.expiredYear,
-  );
+  AddOneTimeTaskPresentationModel(this.name, this.expiredHour,
+      this.expiredMinute, this.expiredDay, this.expiredMonth, this.expiredYear);
 }
 
 class DailyTaskDetailPresentationModel {
-  String name;
-  int expiredHour;
-  int expiredMinute;
-  bool monday;
-  bool tuesday;
-  bool wednesday;
-  bool thursday;
-  bool friday;
-  bool saturday;
-  bool sunday;
+  String _name;
+  int _expiredHour;
+  int _expiredMinute;
+  bool _monday;
+  bool _tuesday;
+  bool _wednesday;
+  bool _thursday;
+  bool _friday;
+  bool _saturday;
+  bool _sunday;
 
-  DailyTaskDetailPresentationModel(
-      this.name,
-      this.expiredHour,
-      this.expiredMinute,
-      this.monday,
-      this.tuesday,
-      this.wednesday,
-      this.thursday,
-      this.friday,
-      this.saturday,
-      this.sunday);
+  DailyTaskDetailPresentationModel(this._name, this._expiredHour,
+      this._expiredMinute, this._monday, this._tuesday, this._wednesday,
+      this._thursday, this._friday, this._saturday, this._sunday);
+
+  bool get sunday => _sunday;
+
+  bool get saturday => _saturday;
+
+  bool get friday => _friday;
+
+  bool get thursday => _thursday;
+
+  bool get wednesday => _wednesday;
+
+  bool get tuesday => _tuesday;
+
+  bool get monday => _monday;
+
+  int get expiredMinute => _expiredMinute;
+
+  int get expiredHour => _expiredHour;
+
+  String get name => _name;
+
+
 }
 
 class OneTimeTaskDetailPresentationModel {
-  String name;
-  int expiredHour;
-  int expiredMinute;
-  int expiredDay;
-  int expiredMonth;
-  int expiredYear;
+  String _name;
+  int _expiredHour;
+  int _expiredMinute;
+  int _expiredDay;
+  int _expiredMonth;
+  int _expiredYear;
 
-  OneTimeTaskDetailPresentationModel(this.name, this.expiredHour,
-      this.expiredMinute, this.expiredDay, this.expiredMonth, this.expiredYear);
+  OneTimeTaskDetailPresentationModel(this._name, this._expiredHour,
+      this._expiredMinute, this._expiredDay, this._expiredMonth,
+      this._expiredYear);
+
+  int get expiredYear => _expiredYear;
+
+  int get expiredMonth => _expiredMonth;
+
+  int get expiredDay => _expiredDay;
+
+  int get expiredMinute => _expiredMinute;
+
+  int get expiredHour => _expiredHour;
+
+  String get name => _name;
+
 
 }
 
 class TaskHistoryPresentationModel {
-  String eventId;
-  String eventName;
-  int doneTime;
-  int expiredHour;
-  int expiredMinute;
-  int createdTime;
-  TaskStatus status;
+  String _eventId;
+  String _eventName;
+  int _doneTime;
+  int _expiredHour;
+  int _expiredMinute;
+  int _createdTime;
+  int _expiredDay;
+  int _expiredMonth;
+  int _expiredYear;
+  TaskStatus _status;
 
-  TaskHistoryPresentationModel(this.eventId, this.eventName, this.doneTime,
-      this.expiredHour, this.expiredMinute, this.createdTime, this.status);
+  TaskHistoryPresentationModel(this._eventId, this._eventName, this._doneTime,
+      this._expiredHour, this._expiredMinute, this._createdTime,
+      this._expiredDay, this._expiredMonth, this._expiredYear, this._status);
+
+  TaskStatus get status => _status;
+
+  int get expiredYear => _expiredYear;
+
+  int get expiredMonth => _expiredMonth;
+
+  int get expiredDay => _expiredDay;
+
+  int get createdTime => _createdTime;
+
+  int get expiredMinute => _expiredMinute;
+
+  int get expiredHour => _expiredHour;
+
+  int get doneTime => _doneTime;
+
+  String get eventName => _eventName;
+
+  String get eventId => _eventId;
+
+
 }
 
 class DailyTaskPresentationModel {
