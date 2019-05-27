@@ -46,9 +46,9 @@ class TodayTodosScreenState extends State<TodayTodosScreen> {
             },
           ),
           IconButton(
-            icon: Icon(Icons.share),
+            icon: Icon(Icons.supervisor_account),
             onPressed: () {
-              _onShareClicked();
+              _onFriendsClicked();
             },
           ),
           IconButton(
@@ -279,8 +279,8 @@ class TodayTodosScreenState extends State<TodayTodosScreen> {
     Navigator.of(context).pushReplacement(_routerProvider.getSignInScreen());
   }
 
-  void _onShareClicked() {
-    Navigator.of(context).push(_routerProvider.getShareQrScreen());
+  void _onFriendsClicked() {
+    Navigator.of(context).push(_routerProvider.getFriendsScreen());
   }
 
   void _goToTaskDetail(BuildContext context, String taskId, TaskType type) {

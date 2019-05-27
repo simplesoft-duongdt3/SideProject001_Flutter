@@ -256,3 +256,67 @@ class OneTimeTaskPresentationModel {
 
 
 }
+
+
+
+class ReceivedFriendRequestPresentationModel {
+  String _requestId;
+  String _email;
+  int _requestTime;
+  FriendRequestStatusEnum _status;
+
+  ReceivedFriendRequestPresentationModel(this._requestId, this._email,
+      this._requestTime, this._status);
+
+  int get requestTime => _requestTime;
+
+  String get email => _email;
+
+  FriendRequestStatusEnum get status => _status;
+
+  String get requestId => _requestId;
+
+}
+
+class SentFriendRequestPresentationModel {
+  String _requestId;
+  String _email;
+  int _requestTime;
+  FriendRequestStatusEnum _status;
+
+  SentFriendRequestPresentationModel(this._requestId, this._email,
+      this._requestTime, this._status);
+
+  int get requestTime => _requestTime;
+
+  String get email => _email;
+
+  FriendRequestStatusEnum get status => _status;
+
+  String get requestId => _requestId;
+
+
+}
+
+class FriendPresentationModel {
+  String _uid;
+  String _email;
+
+  FriendPresentationModel(this._uid, this._email);
+
+  String get email => _email;
+
+  String get uid => _uid;
+
+}
+
+class FriendRequestPresentationModel {
+  String _uid;
+  String _email;
+
+  FriendRequestPresentationModel(this._uid, this._email);
+
+  String get email => _email;
+
+  String get uid => _uid;
+}

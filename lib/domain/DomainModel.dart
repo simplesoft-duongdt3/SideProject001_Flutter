@@ -342,32 +342,22 @@ enum FriendRequestStatusEnum {
 
 class FriendRequestDomainModel {
   String _uid;
-  String _userName;
   String _email;
-  String _requestTime;
-  FriendRequestStatusEnum _status;
 
-  FriendRequestDomainModel(this._uid, this._userName, this._email,
-      this._requestTime, this._status);
-
-  String get requestTime => _requestTime;
+  FriendRequestDomainModel(this._uid, this._email);
 
   String get email => _email;
 
-  String get userName => _userName;
-
   String get uid => _uid;
-
-  FriendRequestStatusEnum get status => _status;
-
 }
 
 class ReceivedFriendRequestDomainModel {
+  String _requestId;
   String _email;
   int _requestTime;
   FriendRequestStatusEnum _status;
 
-  ReceivedFriendRequestDomainModel(this._email,
+  ReceivedFriendRequestDomainModel(this._requestId, this._email,
       this._requestTime, this._status);
 
   int get requestTime => _requestTime;
@@ -375,15 +365,18 @@ class ReceivedFriendRequestDomainModel {
   String get email => _email;
 
   FriendRequestStatusEnum get status => _status;
+
+  String get requestId => _requestId;
 
 }
 
-class SendFriendRequestDomainModel {
+class SentFriendRequestDomainModel {
+  String _requestId;
   String _email;
   int _requestTime;
   FriendRequestStatusEnum _status;
 
-  SendFriendRequestDomainModel(this._email,
+  SentFriendRequestDomainModel(this._requestId, this._email,
       this._requestTime, this._status);
 
   int get requestTime => _requestTime;
@@ -391,16 +384,19 @@ class SendFriendRequestDomainModel {
   String get email => _email;
 
   FriendRequestStatusEnum get status => _status;
+
+  String get requestId => _requestId;
+
 
 }
 
 class FriendDomainModel {
   String _uid;
-  String _userName;
+  String _email;
 
-  FriendDomainModel(this._uid, this._userName);
+  FriendDomainModel(this._uid, this._email);
 
-  String get userName => _userName;
+  String get email => _email;
 
   String get uid => _uid;
 

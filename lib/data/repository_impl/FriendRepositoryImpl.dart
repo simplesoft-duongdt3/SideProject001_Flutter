@@ -14,7 +14,7 @@ class FriendRepositoryImpl extends FriendRepository {
       AcceptFriendRequestDomainModel acceptFriendRequestDomainModel) async {
     var loginUser = _fireAuthController.getLoginUser();
     if (loginUser != null) {
-      await _fireDatabaseController.getFriendRequestRef().update({
+      await _fireDatabaseController.getFriendRequestRef().child(acceptFriendRequestDomainModel.requestUid).update({
         "status": FriendRequestStatusDataConstant.STATUS_ACCEPT,
         "updatedTime": Util.getNowUtcMilliseconds()
       });
@@ -24,7 +24,7 @@ class FriendRepositoryImpl extends FriendRepository {
   @override
   Future<List<ReceivedFriendRequestDomainModel>>
       getReceivedFriendRequests() async {
-    List<ReceivedFriendRequestDomainModel> sendFriendRequestModels = [];
+    List<ReceivedFriendRequestDomainModel> receivedFriendRequestModels = [];
     var loginUser = await _fireAuthController.getLoginUser();
     if (loginUser != null) {
       var uid = loginUser.uid;
@@ -38,15 +38,19 @@ class FriendRepositoryImpl extends FriendRepository {
 
         List<FriendRequestFirebaseDataModel> histories = [];
         values.forEach((key, values) {
-          histories.add(FriendRequestFirebaseDataModel.from(key, values));
+          var friendRequestFirebaseDataModel = FriendRequestFirebaseDataModel.from(key, values);
+          if (friendRequestFirebaseDataModel.status != FriendRequestStatusDataConstant.STATUS_ACCEPT) {
+            histories.add(friendRequestFirebaseDataModel);
+          }
         });
 
-        sendFriendRequestModels = histories
+        receivedFriendRequestModels.sort((a, b) => a.requestTime.compareTo(b.requestTime));
+        receivedFriendRequestModels = histories
             .map((dataModel) => _mapReceivedFriendRequest(dataModel))
             .toList(growable: false);
       }
     }
-    return sendFriendRequestModels;
+    return receivedFriendRequestModels;
   }
 
   @override
@@ -116,8 +120,8 @@ class FriendRepositoryImpl extends FriendRepository {
   }
 
   @override
-  Future<List<SendFriendRequestDomainModel>> getSendFriendRequests() async {
-    List<SendFriendRequestDomainModel> sendFriendRequestModels = [];
+  Future<List<SentFriendRequestDomainModel>> getSendFriendRequests() async {
+    List<SentFriendRequestDomainModel> sendFriendRequestModels = [];
     var loginUser = await _fireAuthController.getLoginUser();
     if (loginUser != null) {
       var uid = loginUser.uid;
@@ -129,9 +133,13 @@ class FriendRepositoryImpl extends FriendRepository {
 
         List<FriendRequestFirebaseDataModel> histories = [];
         values.forEach((key, values) {
-          histories.add(FriendRequestFirebaseDataModel.from(key, values));
+          var friendRequestFirebaseDataModel = FriendRequestFirebaseDataModel.from(key, values);
+          if (friendRequestFirebaseDataModel.status != FriendRequestStatusDataConstant.STATUS_ACCEPT) {
+            histories.add(friendRequestFirebaseDataModel);
+          }
         });
 
+        sendFriendRequestModels.sort((a, b) => a.requestTime.compareTo(b.requestTime));
         sendFriendRequestModels = histories
             .map((dataModel) => _mapSendFriendRequest(dataModel))
             .toList(growable: false);
@@ -140,9 +148,9 @@ class FriendRepositoryImpl extends FriendRepository {
     return sendFriendRequestModels;
   }
 
-  SendFriendRequestDomainModel _mapSendFriendRequest(
+  SentFriendRequestDomainModel _mapSendFriendRequest(
       FriendRequestFirebaseDataModel dataModel) {
-    return SendFriendRequestDomainModel(dataModel.receiverEmail,
+    return SentFriendRequestDomainModel(dataModel.id, dataModel.receiverEmail,
         dataModel.createdTime, _mapFriendRequestStatus(dataModel.status));
   }
 
@@ -158,7 +166,7 @@ class FriendRepositoryImpl extends FriendRepository {
 
   ReceivedFriendRequestDomainModel _mapReceivedFriendRequest(
       FriendRequestFirebaseDataModel dataModel) {
-    return ReceivedFriendRequestDomainModel(dataModel.receiverEmail,
+    return ReceivedFriendRequestDomainModel(dataModel.id, dataModel.receiverEmail,
         dataModel.createdTime, _mapFriendRequestStatus(dataModel.status));
   }
 

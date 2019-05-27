@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter_app/data/repository_impl/FriendRepositoryImpl.dart';
 import 'package:flutter_app/data/repository_impl/TaskRepositoryImpl.dart';
 import 'package:flutter_app/data/repository_impl/UserRepositoryImpl.dart';
 import 'package:flutter_app/domain/DependencyInjectRegister.dart';
@@ -32,5 +33,7 @@ class DataDependencyInjectRegister extends DependencyInjectRegister {
             (c) => TaskRepositoryImpl());
     di.registerSingleton<UserRepository, UserRepositoryImpl>(
         (c) => UserRepositoryImpl());
+    di.registerSingleton<FriendRepository, FriendRepositoryImpl>(
+        (c) => FriendRepositoryImpl());
   }
 }

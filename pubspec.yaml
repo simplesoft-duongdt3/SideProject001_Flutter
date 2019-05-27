@@ -35,8 +35,8 @@ dependencies:
   qr_flutter: ^2.0.0
   #crash
   sentry: 2.2.0
-  #equal
-  equatable: ^0.2.0
+  #bar code scan
+  barcode_scan: ^1.0.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

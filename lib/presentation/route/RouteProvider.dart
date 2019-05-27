@@ -6,6 +6,7 @@ import 'package:flutter_app/presentation/screen/SignUpScreen.dart';
 import 'package:flutter_app/presentation/screen/SplashScreen.dart';
 import 'package:flutter_app/presentation/screen/TodayTodosScreen.dart';
 import 'package:flutter_app/presentation/screen/add_task/AddTaskScreen.dart';
+import 'package:flutter_app/presentation/screen/friend/FriendScreen.dart';
 import 'package:flutter_app/presentation/screen/task/TaskScreen.dart';
 import 'package:flutter_app/presentation/screen/task_detail/DailyTaskDetailScreen.dart';
 import 'package:flutter_app/presentation/screen/task_detail/OneTimeTaskDetailScreen.dart';
@@ -49,5 +50,9 @@ class RouterProvider {
 
   MaterialPageRoute getOneTimeTaskDetailScreen(String taskId) {
     return MaterialPageRoute(builder: (context) => OneTimeTaskDetailScreen(taskId));
+  }
+
+  MaterialPageRoute getFriendsScreen() {
+    return MaterialPageRoute(builder: (context) => FriendsScreen());
   }
 }

@@ -47,7 +47,7 @@ abstract class UserRepository {
 abstract class FriendRepository {
   Future<List<ReceivedFriendRequestDomainModel>> getReceivedFriendRequests();
 
-  Future<List<SendFriendRequestDomainModel>> getSendFriendRequests();
+  Future<List<SentFriendRequestDomainModel>> getSendFriendRequests();
 
   Future<List<FriendDomainModel>> getFriends();
 

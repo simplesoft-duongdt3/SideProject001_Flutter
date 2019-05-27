@@ -1,4 +1,5 @@
 import 'package:flutter_app/domain/DependencyInjectRegister.dart';
+import 'package:flutter_app/presentation/bloc/FriendScreenBloc.dart';
 import 'package:flutter_app/presentation/route/RouteProvider.dart';
 import 'package:kiwi/kiwi.dart' as kiwi;
 
@@ -22,5 +23,6 @@ class PresentationDependencyInjectRegister extends DependencyInjectRegister {
     di.registerFactory((c) => ShareQrScreenBloc());
     di.registerFactory((c) => TaskScreenBloc());
     di.registerFactory((c) => TaskDetailScreenBloc());
+    di.registerFactory((c) => FriendScreenBloc());
   }
 }
