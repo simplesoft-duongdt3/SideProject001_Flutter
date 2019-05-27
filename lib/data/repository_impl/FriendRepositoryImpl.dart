@@ -50,7 +50,52 @@ class FriendRepositoryImpl extends FriendRepository {
   }
 
   @override
-  Future<List<FriendDomainModel>> getFriends() async {}
+  Future<List<FriendDomainModel>> getFriends() async {
+    List<FriendDomainModel> friends = [];
+    var loginUser = await _fireAuthController.getLoginUser();
+    if (loginUser != null) {
+      var uid = loginUser.uid;
+      var friendRequestRef = _fireDatabaseController.getFriendRequestRef();
+      var taskGetFriendRequest = friendRequestRef.orderByChild("senderUid")
+          .equalTo(uid)
+          .once();
+      var taskGetFriendReceive = friendRequestRef.orderByChild("receiverUid")
+          .equalTo(uid)
+          .once();
+
+      var dataSnapshotRequest = await taskGetFriendRequest;
+      if (dataSnapshotRequest.value != null) {
+        Map<dynamic, dynamic> values = dataSnapshotRequest.value;
+
+        values.forEach((key, values) {
+          var friendRequestFirebaseDataModel = FriendRequestFirebaseDataModel
+              .from(key, values);
+          if (friendRequestFirebaseDataModel.status ==
+              FriendRequestStatusDataConstant.STATUS_ACCEPT) {
+            friends.add(
+                _mapFriendFromFriendRequest(friendRequestFirebaseDataModel));
+          }
+        });
+      }
+
+      var dataSnapshotReceive = await taskGetFriendReceive;
+      if (dataSnapshotReceive.value != null) {
+        Map<dynamic, dynamic> values = dataSnapshotReceive.value;
+
+        values.forEach((key, values) {
+          var friendRequestFirebaseDataModel = FriendRequestFirebaseDataModel
+              .from(key, values);
+          if (friendRequestFirebaseDataModel.status ==
+              FriendRequestStatusDataConstant.STATUS_ACCEPT) {
+            friends.add(
+                _mapFriendFromFriendReceive(friendRequestFirebaseDataModel));
+          }
+        });
+      }
+    }
+
+    return friends;
+  }
 
   @override
   Future<void> sendFriendRequest(
@@ -115,5 +160,21 @@ class FriendRepositoryImpl extends FriendRepository {
       FriendRequestFirebaseDataModel dataModel) {
     return ReceivedFriendRequestDomainModel(dataModel.receiverEmail,
         dataModel.createdTime, _mapFriendRequestStatus(dataModel.status));
+  }
+
+  FriendDomainModel _mapFriendFromFriendRequest(
+      FriendRequestFirebaseDataModel dataModel) {
+    return FriendDomainModel(
+        dataModel.receiverUid,
+        dataModel.receiverEmail
+    );
+  }
+
+  FriendDomainModel _mapFriendFromFriendReceive(
+      FriendRequestFirebaseDataModel dataModel) {
+    return FriendDomainModel(
+        dataModel.senderUid,
+        dataModel.senderEmail
+    );
   }
 }

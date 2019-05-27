@@ -233,10 +233,13 @@ class TaskRepositoryImpl implements TaskRepository {
     LoginUserFirebaseDataModel loginUser = await _getLoginUser();
     if (loginUser != null) {
       var uid = loginUser.uid;
-      var todayDailyTodos = await _getTodayDailyTodos(uid);
+      var getTodayDailyTodos = _getTodayDailyTodos(uid);
+      var getTodayOneTimeTodos = _getTodayOneTimeTodos(uid);
+
+      var todayDailyTodos = await getTodayDailyTodos;
       matchedEvents.addAll(todayDailyTodos);
 
-      var todayOneTimeTodos = await _getTodayOneTimeTodos(uid);
+      var todayOneTimeTodos = await getTodayOneTimeTodos;
       matchedEvents.addAll(todayOneTimeTodos);
       return matchedEvents;
     }
@@ -413,6 +416,8 @@ class TaskRepositoryImpl implements TaskRepository {
 
     List<DailyTaskHistoryFirebaseDataModel> todayHistoryModels =
     await _findTodayHistoryModels(listOfTaskId, dateValue, uid);
+
+    List<Future<void>> tasks = [];
     for (var task in matchedTasks) {
       bool isCreateHistory = true;
       var history = todayHistoryModels.firstWhere(
@@ -423,8 +428,13 @@ class TaskRepositoryImpl implements TaskRepository {
       }
 
       if (isCreateHistory) {
-        _createHistory(task, dateValue, uid);
+        Future<void> taskCreateHistory = _createHistory(task, dateValue, uid);
+        tasks.add(taskCreateHistory);
       }
+    }
+
+    for (var task in tasks) {
+      await task;
     }
   }
 
@@ -484,7 +494,7 @@ class TaskRepositoryImpl implements TaskRepository {
 
     var pushTaskHistory =
     _fireDatabaseController.getDailyTaskHistoryRef(uid).push();
-    await pushTaskHistory.set(eventHistoryFirebaseDataModel.toJson());
+    return pushTaskHistory.set(eventHistoryFirebaseDataModel.toJson());
   }
 
   int _getDateValueToday() {

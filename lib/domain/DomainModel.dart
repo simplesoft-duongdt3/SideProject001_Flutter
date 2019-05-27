@@ -397,11 +397,8 @@ class SendFriendRequestDomainModel {
 class FriendDomainModel {
   String _uid;
   String _userName;
-  String _email;
 
-  FriendDomainModel(this._uid, this._userName, this._email);
-
-  String get email => _email;
+  FriendDomainModel(this._uid, this._userName);
 
   String get userName => _userName;
 

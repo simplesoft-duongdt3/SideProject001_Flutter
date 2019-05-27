@@ -303,9 +303,13 @@ class FriendRequestFirebaseDataModel {
   int createdTime;
   int updatedTime;
 
-  FriendRequestFirebaseDataModel(this.senderUid, this.senderEmail,
-      this.receiverUid, this.receiverEmail, this.status, this.createdTime,
-      this.updatedTime);
+  FriendRequestFirebaseDataModel(this.senderUid,
+      this.senderEmail,
+      this.receiverUid,
+      this.receiverEmail,
+      this.status,
+      this.createdTime,
+      this.updatedTime,);
 
   FriendRequestFirebaseDataModel.from(dynamic key, dynamic values)
       : id = key,
