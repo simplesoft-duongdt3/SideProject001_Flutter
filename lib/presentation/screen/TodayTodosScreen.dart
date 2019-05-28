@@ -76,21 +76,19 @@ class TodayTodosScreenState extends State<TodayTodosScreen> {
     return FutureBuilder<List<TodayTodoPresentationModel>>(
       future: _mainScreenBloc.loadEventList(),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return buildLoadingWidget();
-        } else {
-          if (snapshot.connectionState == ConnectionState.done) {
-            if (snapshot.hasData) {
-              List<TodayTodoPresentationModel> eventList = snapshot.data;
-              if (eventList.isEmpty) {
-                return buildEmptyListWidget();
-              } else {
-                return buildListWidget(eventList);
-              }
+        if (snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasData) {
+            List<TodayTodoPresentationModel> eventList = snapshot.data;
+            if (eventList.isEmpty) {
+              return buildEmptyListWidget();
             } else {
-              return buildErrorWidget();
+              return buildListWidget(eventList);
             }
+          } else {
+            return buildErrorWidget();
           }
+        } else {
+          return buildLoadingWidget();
         }
       },
     );

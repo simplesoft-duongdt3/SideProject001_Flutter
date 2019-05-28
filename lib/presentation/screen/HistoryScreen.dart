@@ -1,22 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_app/domain/DomainModel.dart';
+import 'package:flutter_app/main.dart';
 import 'package:flutter_app/presentation/bloc/HistoryScreenBloc.dart';
 import 'package:flutter_app/presentation/model/PresentationModel.dart';
 import 'package:intl/intl.dart';
 
-import '../../main.dart';
-
 class HistoryScreen extends StatefulWidget {
-  HistoryScreen({Key key}) : super(key: key);
+  final String userUid;
+
+  HistoryScreen({Key key, this.userUid}) : super(key: key);
 
   @override
   HistoryScreenState createState() {
-    return HistoryScreenState("History");
+    return HistoryScreenState("History", userUid: userUid);
   }
 }
 
 class HistoryScreenState extends State<HistoryScreen> {
+  final String userUid;
+
+  HistoryScreenState(this._title, {this.userUid});
+
   final String _title;
   final HistoryScreenBloc _mainScreenBloc = diResolver.resolve();
   var timeFormat = new NumberFormat("00", "en_US");
@@ -25,8 +30,6 @@ class HistoryScreenState extends State<HistoryScreen> {
 
   //default today tab
   final int _initTabPos = 0;
-
-  HistoryScreenState(this._title);
 
   @override
   Widget build(BuildContext context) {
@@ -71,23 +74,22 @@ class HistoryScreenState extends State<HistoryScreen> {
   Widget _buildContentWidget(BuildContext context, ReportTimeEnum reportTime) {
     return Center(
       child: FutureBuilder<List<TaskHistoryPresentationModel>>(
-        future: _mainScreenBloc.loadHistoryList(reportTime),
+        future: userUid != null ? _mainScreenBloc.loadFriendHistoryList(
+            userUid, reportTime) : _mainScreenBloc.loadHistoryList(reportTime),
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return buildLoadingWidget();
-          } else {
-            if (snapshot.connectionState == ConnectionState.done) {
-              if (snapshot.hasData) {
-                List<TaskHistoryPresentationModel> eventList = snapshot.data;
-                if (eventList.isEmpty) {
-                  return buildEmptyListWidget();
-                } else {
-                  return buildListWidget(eventList, reportTime);
-                }
+          if (snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.hasData) {
+              List<TaskHistoryPresentationModel> eventList = snapshot.data;
+              if (eventList.isEmpty) {
+                return buildEmptyListWidget();
               } else {
-                return buildErrorWidget();
+                return buildListWidget(eventList, reportTime);
               }
+            } else {
+              return buildErrorWidget();
             }
+          } else {
+            return buildLoadingWidget();
           }
         },
       ),
@@ -120,8 +122,8 @@ class HistoryScreenState extends State<HistoryScreen> {
         scrollDirection: Axis.vertical,
         itemCount: eventList.length,
         separatorBuilder: (context, index) => Divider(
-              color: Colors.grey,
-            ),
+          color: Colors.grey,
+        ),
       ),
     );
   }

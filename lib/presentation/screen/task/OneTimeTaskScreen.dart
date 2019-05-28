@@ -33,21 +33,19 @@ class OneTimeTaskScreenState extends State<OneTimeTaskScreen> {
       child: FutureBuilder<List<OneTimeTaskPresentationModel>>(
         future: _taskScreenBloc.getActiveOneTimeTaskList(),
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return buildLoadingWidget();
-          } else {
-            if (snapshot.connectionState == ConnectionState.done) {
-              if (snapshot.hasData) {
-                List<OneTimeTaskPresentationModel> eventList = snapshot.data;
-                if (eventList.isEmpty) {
-                  return buildEmptyListWidget();
-                } else {
-                  return buildListWidget(eventList);
-                }
+          if (snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.hasData) {
+              List<OneTimeTaskPresentationModel> eventList = snapshot.data;
+              if (eventList.isEmpty) {
+                return buildEmptyListWidget();
               } else {
-                return buildErrorWidget();
+                return buildListWidget(eventList);
               }
+            } else {
+              return buildErrorWidget();
             }
+          } else {
+            return buildLoadingWidget();
           }
         },
       ),

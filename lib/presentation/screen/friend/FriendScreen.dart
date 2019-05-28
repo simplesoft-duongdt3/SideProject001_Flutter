@@ -1,7 +1,7 @@
+import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_app/domain/DomainModel.dart';
-import 'package:flutter_app/domain/Util.dart';
 import 'package:flutter_app/main.dart';
 import 'package:flutter_app/presentation/bloc/FriendScreenBloc.dart';
 import 'package:flutter_app/presentation/model/PresentationModel.dart';
@@ -9,8 +9,6 @@ import 'package:flutter_app/presentation/route/RouteProvider.dart';
 import 'package:flutter_app/presentation/screen/friend/ListFriendScreen.dart';
 import 'package:flutter_app/presentation/screen/friend/ReceivedFriendRequestScreen.dart';
 import 'package:flutter_app/presentation/screen/friend/SentFriendRequestScreen.dart';
-import 'package:barcode_scan/barcode_scan.dart';
-import 'package:flutter/services.dart';
 
 class FriendsScreen extends StatefulWidget {
   FriendsScreen({Key key}) : super(key: key);
@@ -99,7 +97,11 @@ class FriendsScreenState extends State<FriendsScreen> {
         _showSendRequestFriendSuccess(loginUserDomainModel.email);
       }
     } catch (e) {
-      _showErrorScanDialog();
+      if (e is FormatException) {
+        //nothing to do
+      } else {
+        _showErrorScanDialog();
+      }
     }
   }
 

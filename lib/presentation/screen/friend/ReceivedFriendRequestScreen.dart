@@ -101,6 +101,8 @@ class ReceivedFriendRequestScreenState extends State<ReceivedFriendRequestScreen
       ),
       title: Text(
         sentRequest.email,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
       ),
       trailing: InkWell(
         onTap: () async {
@@ -122,10 +124,41 @@ class ReceivedFriendRequestScreenState extends State<ReceivedFriendRequestScreen
   }
 
   void _onAcceptFriendRequestClicked(ReceivedFriendRequestPresentationModel sentRequest) async {
-    await _friendScreenBloc.acceptFriendRequest(AcceptFriendRequestDomainModel(
-        sentRequest.requestId
-    ));
-    _refreshData();
+    _showConfirmAcceptDialog(sentRequest);
+  }
+
+  void _showConfirmAcceptDialog(
+      ReceivedFriendRequestPresentationModel sentRequest) async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: new Text("Accept friend request?"),
+          content: new Text(
+              "You be a friend with ${sentRequest.email} when you agree it!"),
+          actions: <Widget>[
+            new FlatButton(
+              child: new Text("CLOSE"),
+              onPressed: () {
+                //nothing to do
+                Navigator.of(context).pop();
+              },
+            ),
+            new FlatButton(
+              child: new Text("AGREE"),
+              onPressed: () async {
+                await _friendScreenBloc.acceptFriendRequest(
+                    AcceptFriendRequestDomainModel(
+                        sentRequest.requestId
+                    ));
+                Navigator.of(context).pop();
+                _refreshData();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
 }

@@ -14,6 +14,14 @@ class HistoryScreenBloc {
     return result;
   }
 
+  Future<List<TaskHistoryPresentationModel>> loadFriendHistoryList(
+      String userUid, ReportTimeEnum reportTime) async {
+    var todayEvents = await _eventRepository.getUserTaskHistoryReport(
+        userUid, reportTime);
+    List<TaskHistoryPresentationModel> result = _mapEventList(todayEvents);
+    return result;
+  }
+
   List<TaskHistoryPresentationModel> _mapEventList(
       List<TaskHistoryDomainModel> todayEvents) {
     return todayEvents

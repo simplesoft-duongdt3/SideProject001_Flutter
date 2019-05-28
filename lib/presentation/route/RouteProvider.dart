@@ -20,8 +20,9 @@ class RouterProvider {
     return MaterialPageRoute(builder: (context) => TodayTodosScreen());
   }
 
-  MaterialPageRoute getHistoryScreen() {
-    return MaterialPageRoute(builder: (context) => HistoryScreen());
+  MaterialPageRoute getHistoryScreen({String userUid}) {
+    return MaterialPageRoute(
+        builder: (context) => HistoryScreen(userUid: userUid));
   }
 
   MaterialPageRoute getSignUpScreen() {

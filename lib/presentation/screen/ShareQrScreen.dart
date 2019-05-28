@@ -42,37 +42,43 @@ class _ShareQrSectionState extends State<_ShareQrSection> {
         child: FutureBuilder<LoginUserPresentationModel>(
             future: _shareQrScreenBloc.getCurrentUser(),
             builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                if (snapshot.hasData) {
+                  LoginUserPresentationModel user = snapshot.data;
+                  if (user != null) {
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        QrImage(
+                          data: user.qrCodeContent,
+                          size: 200.0,
+                        ),
+                        Text(user.userName),
+                        Text(user.email),
+                      ],
+                    );
+                  } else {
+                    buildLoadingWidget();
+                  }
+                } else {
+                  return Text(
+                    "Something wrong occured here, guys!",
+                    textAlign: TextAlign.center,
+                  );
+                }
+              }
+
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Container();
               } else {
-                if (snapshot.connectionState == ConnectionState.done) {
-                  if (snapshot.hasData) {
-                    LoginUserPresentationModel user = snapshot.data;
-                    if (user != null) {
-                      return Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          QrImage(
-                            data: user.qrCodeContent,
-                            size: 200.0,
-                          ),
-                          Text(user.userName),
-                          Text(user.email),
-                        ],
-                      );
-                    } else {
-                      return Container();
-                    }
-                  } else {
-                    return Text(
-                      "Something wrong occured here, guys!",
-                      textAlign: TextAlign.center,
-                    );
-                  }
-                }
+
               }
             }),
       ),
     );
+  }
+
+  CircularProgressIndicator buildLoadingWidget() {
+    return CircularProgressIndicator();
   }
 }

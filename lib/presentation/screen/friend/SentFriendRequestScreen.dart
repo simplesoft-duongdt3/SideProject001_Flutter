@@ -5,13 +5,11 @@ import 'package:flutter_app/presentation/bloc/FriendScreenBloc.dart';
 import 'package:flutter_app/presentation/model/PresentationModel.dart';
 
 class SentFriendRequestScreen extends StatefulWidget {
-
   @override
   State<StatefulWidget> createState() {
     return SentFriendRequestScreenState();
   }
 }
-
 
 class SentFriendRequestScreenState extends State<SentFriendRequestScreen> {
   final FriendScreenBloc _friendScreenBloc = diResolver.resolve();
@@ -100,6 +98,8 @@ class SentFriendRequestScreenState extends State<SentFriendRequestScreen> {
       ),
       title: Text(
         sentRequest.email,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
       ),
     );
   }
@@ -107,5 +107,4 @@ class SentFriendRequestScreenState extends State<SentFriendRequestScreen> {
   Future<void> _refreshData() async {
     setState(() {});
   }
-
 }

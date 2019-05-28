@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_app/main.dart';
 import 'package:flutter_app/presentation/bloc/FriendScreenBloc.dart';
 import 'package:flutter_app/presentation/model/PresentationModel.dart';
+import 'package:flutter_app/presentation/route/RouteProvider.dart';
 
 class ListFriendScreen extends StatefulWidget {
 
@@ -12,9 +13,9 @@ class ListFriendScreen extends StatefulWidget {
   }
 }
 
-
 class ListFriendScreenState extends State<ListFriendScreen> {
   final FriendScreenBloc _friendScreenBloc = diResolver.resolve();
+  final RouterProvider _routerProvider = diResolver.resolve();
 
   @override
   Widget build(BuildContext context) {
@@ -92,20 +93,28 @@ class ListFriendScreenState extends State<ListFriendScreen> {
       List<FriendPresentationModel> eventList,
       BuildContext context,
       int index) {
-    FriendPresentationModel sentRequest = eventList[index];
+    FriendPresentationModel friend = eventList[index];
     return ListTile(
+      onTap: () => _onFriendClicked(friend),
       leading: Icon(
         Icons.person_add,
         color: Theme.of(context).primaryColor,
       ),
       title: Text(
-        sentRequest.email,
+        friend.email,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
       ),
     );
   }
 
   Future<void> _refreshData() async {
     setState(() {});
+  }
+
+  void _onFriendClicked(FriendPresentationModel friend) {
+    Navigator.of(context).push(
+        _routerProvider.getHistoryScreen(userUid: friend.uid));
   }
 
 }

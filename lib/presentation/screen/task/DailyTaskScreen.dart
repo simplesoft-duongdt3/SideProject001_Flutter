@@ -33,21 +33,19 @@ class DailyTaskScreenState extends State<DailyTaskScreen> {
       child: FutureBuilder<List<DailyTaskPresentationModel>>(
         future: _taskScreenBloc.getActiveDailyTaskList(),
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return buildLoadingWidget();
-          } else {
-            if (snapshot.connectionState == ConnectionState.done) {
-              if (snapshot.hasData) {
-                List<DailyTaskPresentationModel> eventList = snapshot.data;
-                if (eventList.isEmpty) {
-                  return buildEmptyListWidget();
-                } else {
-                  return buildListWidget(eventList);
-                }
+          if (snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.hasData) {
+              List<DailyTaskPresentationModel> eventList = snapshot.data;
+              if (eventList.isEmpty) {
+                return buildEmptyListWidget();
               } else {
-                return buildErrorWidget();
+                return buildListWidget(eventList);
               }
+            } else {
+              return buildErrorWidget();
             }
+          } else {
+            return buildLoadingWidget();
           }
         },
       ),

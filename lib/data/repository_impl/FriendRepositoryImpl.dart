@@ -39,7 +39,8 @@ class FriendRepositoryImpl extends FriendRepository {
         List<FriendRequestFirebaseDataModel> histories = [];
         values.forEach((key, values) {
           var friendRequestFirebaseDataModel = FriendRequestFirebaseDataModel.from(key, values);
-          if (friendRequestFirebaseDataModel.status != FriendRequestStatusDataConstant.STATUS_ACCEPT) {
+          if (friendRequestFirebaseDataModel.status ==
+              FriendRequestStatusDataConstant.STATUS_SENT) {
             histories.add(friendRequestFirebaseDataModel);
           }
         });
@@ -134,12 +135,13 @@ class FriendRepositoryImpl extends FriendRepository {
         List<FriendRequestFirebaseDataModel> histories = [];
         values.forEach((key, values) {
           var friendRequestFirebaseDataModel = FriendRequestFirebaseDataModel.from(key, values);
-          if (friendRequestFirebaseDataModel.status != FriendRequestStatusDataConstant.STATUS_ACCEPT) {
+          if (friendRequestFirebaseDataModel.status ==
+              FriendRequestStatusDataConstant.STATUS_SENT) {
             histories.add(friendRequestFirebaseDataModel);
           }
         });
 
-        sendFriendRequestModels.sort((a, b) => a.requestTime.compareTo(b.requestTime));
+        histories.sort((a, b) => a.createdTime.compareTo(b.createdTime));
         sendFriendRequestModels = histories
             .map((dataModel) => _mapSendFriendRequest(dataModel))
             .toList(growable: false);
