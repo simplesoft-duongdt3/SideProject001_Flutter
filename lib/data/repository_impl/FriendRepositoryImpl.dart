@@ -29,17 +29,15 @@ class FriendRepositoryImpl extends FriendRepository {
     if (loginUser != null) {
       var uid = loginUser.uid;
       var friendRequestRef = _fireDatabaseController.getFriendRequestRef();
-      var dataSnapshot = await friendRequestRef
-          .orderByChild("receiverUid")
-          .equalTo(uid)
-          .once();
+      var dataSnapshot = await friendRequestRef.once();
       if (dataSnapshot.value != null) {
         Map<dynamic, dynamic> values = dataSnapshot.value;
 
         List<FriendRequestFirebaseDataModel> histories = [];
         values.forEach((key, values) {
           var friendRequestFirebaseDataModel = FriendRequestFirebaseDataModel.from(key, values);
-          if (friendRequestFirebaseDataModel.status ==
+          if (friendRequestFirebaseDataModel.receiverUid == uid &&
+              friendRequestFirebaseDataModel.status ==
               FriendRequestStatusDataConstant.STATUS_SENT) {
             histories.add(friendRequestFirebaseDataModel);
           }
@@ -61,37 +59,23 @@ class FriendRepositoryImpl extends FriendRepository {
     if (loginUser != null) {
       var uid = loginUser.uid;
       var friendRequestRef = _fireDatabaseController.getFriendRequestRef();
-      var taskGetFriendRequest = friendRequestRef.orderByChild("senderUid")
-          .equalTo(uid)
-          .once();
-      var taskGetFriendReceive = friendRequestRef.orderByChild("receiverUid")
-          .equalTo(uid)
-          .once();
+      var taskGetFriendRequests = friendRequestRef.once();
 
-      var dataSnapshotRequest = await taskGetFriendRequest;
+      var dataSnapshotRequest = await taskGetFriendRequests;
       if (dataSnapshotRequest.value != null) {
         Map<dynamic, dynamic> values = dataSnapshotRequest.value;
 
         values.forEach((key, values) {
           var friendRequestFirebaseDataModel = FriendRequestFirebaseDataModel
               .from(key, values);
-          if (friendRequestFirebaseDataModel.status ==
+          if (friendRequestFirebaseDataModel.senderUid == uid &&
+              friendRequestFirebaseDataModel.status ==
               FriendRequestStatusDataConstant.STATUS_ACCEPT) {
             friends.add(
                 _mapFriendFromFriendRequest(friendRequestFirebaseDataModel));
-          }
-        });
-      }
-
-      var dataSnapshotReceive = await taskGetFriendReceive;
-      if (dataSnapshotReceive.value != null) {
-        Map<dynamic, dynamic> values = dataSnapshotReceive.value;
-
-        values.forEach((key, values) {
-          var friendRequestFirebaseDataModel = FriendRequestFirebaseDataModel
-              .from(key, values);
-          if (friendRequestFirebaseDataModel.status ==
-              FriendRequestStatusDataConstant.STATUS_ACCEPT) {
+          } else if (friendRequestFirebaseDataModel.receiverUid == uid &&
+              friendRequestFirebaseDataModel.status ==
+                  FriendRequestStatusDataConstant.STATUS_ACCEPT) {
             friends.add(
                 _mapFriendFromFriendReceive(friendRequestFirebaseDataModel));
           }
@@ -128,14 +112,16 @@ class FriendRepositoryImpl extends FriendRepository {
       var uid = loginUser.uid;
       var friendRequestRef = _fireDatabaseController.getFriendRequestRef();
       var dataSnapshot =
-          await friendRequestRef.orderByChild("senderUid").equalTo(uid).once();
+      await friendRequestRef.once();
+
       if (dataSnapshot.value != null) {
         Map<dynamic, dynamic> values = dataSnapshot.value;
 
         List<FriendRequestFirebaseDataModel> histories = [];
         values.forEach((key, values) {
           var friendRequestFirebaseDataModel = FriendRequestFirebaseDataModel.from(key, values);
-          if (friendRequestFirebaseDataModel.status ==
+          if (friendRequestFirebaseDataModel.senderUid == uid &&
+              friendRequestFirebaseDataModel.status ==
               FriendRequestStatusDataConstant.STATUS_SENT) {
             histories.add(friendRequestFirebaseDataModel);
           }
@@ -168,7 +154,7 @@ class FriendRepositoryImpl extends FriendRepository {
 
   ReceivedFriendRequestDomainModel _mapReceivedFriendRequest(
       FriendRequestFirebaseDataModel dataModel) {
-    return ReceivedFriendRequestDomainModel(dataModel.id, dataModel.receiverEmail,
+    return ReceivedFriendRequestDomainModel(dataModel.id, dataModel.senderEmail,
         dataModel.createdTime, _mapFriendRequestStatus(dataModel.status));
   }
 
